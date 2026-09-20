@@ -1,0 +1,1 @@
+{"resource":"https://api.relmcrm.com/mcp","authorization_servers":["https://api.relmcrm.com"],"scopes_supported":["crm"],"bearer_methods_supported":["header"],"resource_documentation":"https://relmcrm.com/docs"}

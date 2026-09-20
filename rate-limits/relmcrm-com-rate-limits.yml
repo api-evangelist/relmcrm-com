@@ -1,0 +1,90 @@
+generated: '2026-09-19'
+method: searched
+source: https://relmcrm.com/docs (Rate limits & quotas) + https://relmcrm.com/errors (rate_limited, quota_exceeded, spend_cap_reached)
+checked: '2026-09-19'
+corroboration: >-
+  Live anonymous probes on 2026-09-19 (GET https://api.relmcrm.com/v1/schema -> 401 problem+json; POST
+  https://api.relmcrm.com/mcp tools/call -> 401) returned no X-RateLimit-* or X-Quota-* headers, which is
+  consistent with the docs: the headers ride on authenticated responses, and this pass holds no key. Header
+  NAMES below come from the docs; no numeric value has been observed live.
+confidence: medium
+confidence_note: >-
+  The per-minute rate limit is documented to exist but its NUMBER is not published anywhere (docs, llms.txt,
+  pricing, error reference); Scale advertises "top-tier rate limits" without a figure. The monthly quotas are
+  published exactly. Treat the header family as authoritative for client design and read the live limit from
+  X-RateLimit-* on the first authenticated response.
+limit_count: 4
+scopes:
+- scope: per-workspace
+  surface: REST (api.relmcrm.com/v1) + MCP (api.relmcrm.com/mcp) + A2A — one workspace budget
+  window: 1 minute
+  limit: null
+  limit_note: Documented as "rate-limited per workspace per minute"; the number is not published.
+  unit: requests
+  burst: null
+  status_on_exhaustion: 429
+  error_code: rate_limited
+  headers:
+  - name: X-RateLimit-*
+    meaning: Per-minute rate-limit family named in the docs ("Responses carry X-RateLimit-* and X-Quota-* headers"); individual member names are not enumerated.
+  - name: Retry-After
+    meaning: Named on the rate_limited error ("Back off and retry (see Retry-After)").
+  retry_after: documented
+  source: https://relmcrm.com/docs
+- scope: per-workspace
+  surface: all surfaces — Free plan
+  window: monthly (billing period)
+  limit: 1000
+  unit: requests
+  status_on_exhaustion: 429
+  error_code: quota_exceeded
+  headers:
+  - name: X-Quota-*
+    meaning: Monthly-quota family named in the docs; member names not enumerated. GET /v1/usage returns used/limit/overage/plan.
+  note: Hard stop at the cap; no overage on Free.
+  source: https://relmcrm.com/docs
+- scope: per-workspace
+  surface: all surfaces — Pro plan
+  window: monthly (billing period)
+  limit: 100000
+  unit: requests
+  status_on_exhaustion: 429 only when the customer-set spend cap is hit (spend_cap_reached); otherwise metered overage at $0.0001/request
+  error_code: spend_cap_reached
+  source: https://relmcrm.com/docs
+- scope: per-workspace
+  surface: all surfaces — Scale plan
+  window: monthly (billing period)
+  limit: 2000000
+  unit: requests
+  status_on_exhaustion: 429 only when the customer-set spend cap is hit (spend_cap_reached); otherwise metered overage at $0.0001/request
+  error_code: spend_cap_reached
+  source: https://relmcrm.com/docs
+plan_caps:
+- scope: per-workspace — Free plan
+  resource: automations
+  limit: 2
+  status_on_exhaustion: 403
+  error_code: plan_limit
+- scope: per-workspace — Free plan
+  resource: sequences
+  limit: 1
+  status_on_exhaustion: 403
+  error_code: plan_limit
+metering:
+  test_mode_counts: false
+  batch: metered per operation (POST /v1/batch up to 100 operations)
+  mcp_array_post: metered per tool call
+  spend_cap: 'PATCH /v1/settings {"overage_cap_usd": <number|null>} (relm_set_spend_cap); $0 hard-stops like Free'
+exhaustion_codes:
+- status: 429
+  code: rate_limited
+  meaning: Too many requests this minute. Back off and retry (see Retry-After).
+- status: 429
+  code: quota_exceeded
+  meaning: The monthly request quota was reached. Check GET /v1/usage; upgrade to continue.
+- status: 429
+  code: spend_cap_reached
+  meaning: 'The monthly overage spend cap was reached. Raise or clear it: PATCH /v1/settings {"overage_cap_usd": null}.'
+- status: 403
+  code: plan_limit
+  meaning: A plan cap was reached (e.g. Free allows 2 automations / 1 sequence).

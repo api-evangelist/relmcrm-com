@@ -1,0 +1,93 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enrichment overlay for the Relm CRM API
+  version: 1.0.0
+extends: openapi/_original/relmcrm-com-openapi.json
+x-generated: '2026-09-19'
+x-method: generated
+x-source: >-
+  openapi/_original/relmcrm-com-openapi.json + https://relmcrm.com/docs + https://relmcrm.com/errors +
+  https://relmcrm.com/terms + https://relmcrm.com/privacy
+x-rationale: >-
+  The provider's spec is complete on operations and security but omits five things its own docs publish:
+  termsOfService / privacy links, externalDocs to the human reference, the per-code error table (the spec
+  declares one `default` Problem response and no 4xx codes), the rate-limit / quota response headers, and the
+  webhook event vocabulary. This overlay layers those in WITHOUT mutating the original. Apply with any Overlay
+  1.0.0 processor against openapi/_original/relmcrm-com-openapi.json. Every value here is quoted from a provider
+  page; nothing is inferred.
+actions:
+- target: $.info
+  description: Add the terms of service the docs and llms.txt link (the spec has none).
+  update:
+    termsOfService: https://relmcrm.com/terms
+    x-privacy-policy: https://relmcrm.com/privacy
+    x-changelog: https://relmcrm.com/changelog
+    x-status-page: https://relmcrm.com/status
+    x-llms-txt: https://relmcrm.com/llms.txt
+    x-agent-card: https://relmcrm.com/.well-known/agent-card.json
+    x-mcp-descriptor: https://relmcrm.com/.well-known/mcp.json
+- target: $
+  description: Point at the human API reference and error reference.
+  update:
+    externalDocs:
+      description: Relm API documentation (quickstart, conventions, MCP, OAuth 2.1, webhooks, errors, rate limits)
+      url: https://relmcrm.com/docs
+- target: $.components.responses.Problem
+  description: >-
+    Enumerate the 20 published error codes (https://relmcrm.com/errors) on the shared Problem response so a
+    reader can see which statuses the single `default` response actually covers.
+  update:
+    description: >-
+      RFC 9457 application/problem+json. Published codes: 400 bad_request, invalid_cursor; 401 unauthorized;
+      403 forbidden, plan_limit; 404 not_found; 409 conflict, idempotency_key_reused, idempotency_in_progress;
+      412 version_conflict; 413 payload_too_large; 422 validation_failed, unknown_value, unknown_field,
+      invalid_reference, identifier_required; 429 rate_limited, quota_exceeded, spend_cap_reached; 500
+      internal_error. type is https://relmcrm.com/errors/<code>. See errors/relmcrm-com-problem-types.yml.
+    x-error-codes:
+    - {status: 400, code: bad_request}
+    - {status: 400, code: invalid_cursor}
+    - {status: 401, code: unauthorized}
+    - {status: 403, code: forbidden}
+    - {status: 403, code: plan_limit}
+    - {status: 404, code: not_found}
+    - {status: 409, code: conflict}
+    - {status: 409, code: idempotency_key_reused}
+    - {status: 409, code: idempotency_in_progress}
+    - {status: 412, code: version_conflict}
+    - {status: 413, code: payload_too_large}
+    - {status: 422, code: validation_failed}
+    - {status: 422, code: unknown_value}
+    - {status: 422, code: unknown_field}
+    - {status: 422, code: invalid_reference}
+    - {status: 422, code: identifier_required}
+    - {status: 429, code: rate_limited}
+    - {status: 429, code: quota_exceeded}
+    - {status: 429, code: spend_cap_reached}
+    - {status: 500, code: internal_error}
+- target: $.components
+  description: Declare the rate-limit / quota header families the docs say every response carries, and the retry header named on 429 rate_limited.
+  update:
+    headers:
+      X-RateLimit:
+        description: 'Per-workspace per-minute rate-limit family ("X-RateLimit-*" — member names not enumerated by the docs).'
+        schema: {type: string}
+      X-Quota:
+        description: 'Monthly quota family ("X-Quota-*" — member names not enumerated); GET /usage returns used/limit/overage/plan.'
+        schema: {type: string}
+      Retry-After:
+        description: Seconds to wait, on 429 rate_limited.
+        schema: {type: integer}
+- target: $.components.schemas.WebhookInput.properties.events.items
+  description: Name the five events the docs enumerate (the spec says "Subset of the 5 events" without listing them; AutomationInput.trigger_event carries the same enum).
+  update:
+    enum: [contact.created, contact.updated, deal.created, deal.updated, deal.stage_changed, '*']
+- target: $.paths['/batch'].post
+  description: Record the documented batch semantics the summary compresses.
+  update:
+    x-metering: metered per operation, not per call
+    x-events: event-silent — webhooks and automations do not fire for batch writes
+    x-idempotency: no Idempotency-Key parameter; retries can double-create
+- target: $.tags[?(@.name=='Webhooks')]
+  description: Link the webhook tag to its docs section and to the captured catalog.
+  update:
+    externalDocs: {url: 'https://relmcrm.com/docs#webhooks', description: 'Signing (Relm-Signature t=,v1=), retries (1m,5m,30m,2h,6h), dead-letter after 6'}

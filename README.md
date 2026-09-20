@@ -64,5 +64,8 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Relm is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry) and added to the network as a stub for full-pipeline profiling.
+Relm is an API-first CRM built for LLMs and AI agents (operated by ASP FZE LLC; data hosted in Helsinki, Finland). One workspace key drives three surfaces: a 72-operation OpenAPI 3.1 REST API at `https://api.relmcrm.com/v1`, a hosted MCP server at `https://api.relmcrm.com/mcp` (41 tools, anonymous `tools/list`), and an A2A 0.3.0 agent card at `https://relmcrm.com/.well-known/agent-card.json`. Profiled 2026-09-19 from the provider's own public surface — see `apis.yml` for every artifact and pointer.
 - https://relmcrm.com/
+- https://relmcrm.com/docs
+- https://relmcrm.com/openapi.json
+- https://relmcrm.com/llms.txt

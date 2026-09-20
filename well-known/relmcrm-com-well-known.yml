@@ -1,0 +1,117 @@
+generated: '2026-09-19'
+method: probed
+source: live probes of /.well-known/ on relmcrm.com, www.relmcrm.com, api.relmcrm.com and app.relmcrm.com (2026-09-19)
+summary: >-
+  Relm publishes an unusually complete well-known surface, split across two hosts by design. The apex
+  relmcrm.com serves security.txt (RFC 9116), the A2A agent card at BOTH /.well-known/agent-card.json and the
+  legacy /.well-known/agent.json (byte-identical), an MCP server descriptor (mcp.json) and an ai-plugin.json
+  manifest. The API host api.relmcrm.com serves RFC 8414 authorization-server metadata and RFC 9728
+  protected-resource metadata (resource https://api.relmcrm.com/mcp, authorization_servers
+  [https://api.relmcrm.com]) — app.relmcrm.com returns the same two documents, so the two hosts share one
+  origin. No host serves openid-configuration or api-catalog (RFC 9727). WellKnown and SecurityTxt pointers are
+  both earned.
+pointer_basis: >-
+  WellKnown emitted on seven real 200s (security.txt, agent-card.json, agent.json, mcp.json, ai-plugin.json on
+  the apex; oauth-authorization-server and oauth-protected-resource on the API host). SecurityTxt emitted on the
+  151-byte RFC 9116 file (Contact, Expires 2026-12-31, Preferred-Languages, Canonical; no Policy field).
+false_positive_watch: >-
+  The apex host answers unknown paths with an HTML 404 (text/html, status 404) and the API/app hosts with an
+  application/problem+json 404 — neither is an SPA catch-all, so every 200 below is a served document. The
+  agent card body is saved under a2a/relmcrm-com-agent-card.json rather than here.
+hosts:
+- host: https://relmcrm.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/plain; charset=utf-8
+    file: relmcrm-com-security.txt
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    file: ../a2a/relmcrm-com-agent-card.json
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    file: ../a2a/relmcrm-com-agent-card.json
+    note: Byte-identical to agent-card.json.
+  - path: /.well-known/mcp.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    file: relmcrm-com-mcp.json
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    file: relmcrm-com-ai-plugin.json
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /.well-known/skills/index.json
+    status: 404
+- host: https://www.relmcrm.com
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 301
+    note: Redirects to https://relmcrm.com/.well-known/agent-card.json (every path 301s to the apex).
+  - path: /.well-known/agent.json
+    status: 301
+- host: https://api.relmcrm.com
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: relmcrm-com-oauth-authorization-server.json
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    file: relmcrm-com-oauth-protected-resource.json
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/mcp.json
+    status: 404
+- host: https://app.relmcrm.com
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: relmcrm-com-oauth-authorization-server.json
+    note: Same 597-byte body as the API host (issuer https://api.relmcrm.com).
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    file: relmcrm-com-oauth-protected-resource.json
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+unresolved_hosts:
+- host: docs.relmcrm.com
+  result: DNS does not resolve (docs live at https://relmcrm.com/docs)
+- host: developer.relmcrm.com
+  result: DNS does not resolve
+- host: mcp.relmcrm.com
+  result: DNS does not resolve (the MCP server is https://api.relmcrm.com/mcp)
+- host: status.relmcrm.com
+  result: DNS does not resolve (status page is https://relmcrm.com/status)

@@ -1,0 +1,12 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Relm CRM",
+  "name_for_model": "relm",
+  "description_for_human": "API-first CRM built for LLMs. Manage contacts, companies, deals and activities.",
+  "description_for_model": "Relm is a CRM whose primary interface is an API and a native MCP server. Use it to create and update contacts (con_), companies (cmp_), deals (deal_) and activities (act_), and to manage pipelines and automations. Read /v1/schema first; on an unknown_value error use the returned valid_options. Prefer the MCP server at https://api.relmcrm.com/mcp; REST is at https://api.relmcrm.com/v1.",
+  "auth": { "type": "user_http", "authorization_type": "bearer" },
+  "api": { "type": "openapi", "url": "https://relmcrm.com/openapi.json" },
+  "logo_url": "https://relmcrm.com/favicon.svg",
+  "contact_email": "hello@relmcrm.com",
+  "legal_info_url": "https://relmcrm.com/"
+}

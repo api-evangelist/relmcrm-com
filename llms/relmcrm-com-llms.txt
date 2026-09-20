@@ -1,0 +1,75 @@
+# Relm
+
+> Relm is an API-first CRM built for LLMs and AI agents. Contacts, companies, deals and activities are exposed over a REST API and a native Model Context Protocol (MCP) server, so an AI agent with a bearer key can read and write the CRM directly. The web dashboard is a thin human view. Free tier: 1,000 API requests/month, no credit card.
+
+## Connect
+
+- [REST API](https://api.relmcrm.com/v1): Base URL for all REST endpoints. Auth: `Authorization: Bearer relm_live_...`
+- [MCP server](https://api.relmcrm.com/mcp): Native Model Context Protocol server (Streamable HTTP). Every CRM operation is a typed tool (41 of them). Start with `relm_describe_schema`.
+- OAuth 2.1: authorization code + PKCE (S256) + refresh, with dynamic client registration at `https://api.relmcrm.com/oauth/register`. Discovery: `/.well-known/oauth-authorization-server` and `/.well-known/oauth-protected-resource`. Scope `crm`. An unauthenticated `tools/call` returns 401 + `WWW-Authenticate`. API keys remain supported.
+- [A2A endpoint](https://api.relmcrm.com/a2a): Agent2Agent JSON-RPC (`message/send`); agent card at [/.well-known/agent-card.json](https://relmcrm.com/.well-known/agent-card.json).
+- [OpenAPI spec](https://relmcrm.com/openapi.json): Machine-readable REST contract (OpenAPI 3.1) for the whole `/v1` surface.
+- [Dashboard / sign up](https://app.relmcrm.com/): Mint API keys (live + free test mode), view records, manage billing.
+
+## Docs
+
+- [API documentation](https://relmcrm.com/docs): Quickstart, auth, objects, errors, pagination, idempotency, webhooks, rate limits, MCP setup.
+- [Agent hub](https://relmcrm.com/agents): MCP config, discovery endpoints, self-correcting errors, agent guarantees.
+- [Changelog](https://relmcrm.com/changelog): What's new, newest first.
+- [Privacy policy](https://relmcrm.com/privacy): what we collect, EU hosting, subprocessors, deletion and your rights. We never train on your data.
+- [Terms of service](https://relmcrm.com/terms): the agreement with ASP FZE LLC - acceptable use, billing and spend caps, no uptime guarantee, and that an AI agent you connect acts as you.
+
+## Objects
+
+- Contacts (`/v1/contacts`, id `con_`): people; email-optional (phone or LinkedIn-only allowed); email is unique per workspace (a duplicate returns the existing record).
+- Companies (`/v1/companies`, id `cmp_`): accounts; contacts and deals link to them.
+- Deals (`/v1/deals`, id `deal_`): opportunities in a pipeline + stage.
+- Activities (`/v1/activities`, id `act_`): notes/calls/emails/meetings; backdatable via `occurred_at`.
+- Pipelines (`/v1/pipelines`): named pipelines with ordered stages.
+- Automations (`/v1/automations`): single-step event-triggered "when X then Y" rules.
+- Sequences (`/v1/sequences`): multi-step drip sequences with auto-enroll and exit conditions.
+- Templates (`/v1/templates`): reusable email templates referenced by automations and sequences.
+- Webhooks (`/v1/webhooks`): subscribe an https endpoint to events; HMAC-signed (`Relm-Signature: t=,v1=`), retried with backoff, dead-lettered after 6 attempts. Secret returned once on create.
+- Custom fields (`POST /v1/fields`): register once, then send values under `custom_fields` on any object.
+- Search (`/v1/search`): cross-object search; contact, company and deal lists also take a `?q=` substring filter (other lists use their exact filters - an unknown filter is rejected with 400 + valid_options).
+- Schema (`/v1/schema`): live self-describing registry of objects, fields, enum values.
+- Batch (`/v1/batch`, MCP `relm_batch`): up to 100 operations in one round-trip; metered per operation.
+
+## Learn
+
+- [What is a CRM for LLMs?](https://relmcrm.com/learn/crm-for-llms)
+- [MCP CRM server: connect your CRM to Claude](https://relmcrm.com/learn/mcp-crm-server)
+- [How to give your AI agent a CRM](https://relmcrm.com/learn/give-your-ai-agent-a-crm)
+- [CRM for n8n](https://relmcrm.com/learn/crm-for-n8n): call Relm from the HTTP Request node or the n8n AI Agent over MCP.
+- [CRM MCP servers, compared](https://relmcrm.com/learn/crm-mcp-servers): verified reference of every CRM shipping an MCP server - read-write vs read-only, auth burden, plan gates, and the claims other comparisons get wrong. Verified 2026-07-25.
+- [Relm vs Airtable](https://relmcrm.com/learn/relm-vs-airtable): agent-native CRM vs a database with a UI.
+- [Relm vs Attio](https://relmcrm.com/learn/relm-vs-attio): agent-first CRM vs a team CRM with AI assists.
+- [Relm vs Notion](https://relmcrm.com/learn/relm-vs-notion): agent-native CRM vs a connected workspace used as a light CRM.
+- [Relm vs Salesforce](https://relmcrm.com/learn/relm-vs-salesforce): lightweight agent-run CRM vs the enterprise standard.
+- [Relm vs Google Sheets](https://relmcrm.com/learn/relm-vs-google-sheets): when a spreadsheet CRM stops working for an agent.
+
+## Migrate
+
+- [Migrate from HubSpot](https://relmcrm.com/learn/migrate-from-hubspot): export, map lifecycle stages to a pipeline and properties to custom fields; the agent runs the import.
+- [Migrate from Pipedrive](https://relmcrm.com/learn/migrate-from-pipedrive): pipelines and stages map 1:1; activities and custom fields carry over.
+- [Migrate from Salesforce](https://relmcrm.com/learn/migrate-from-salesforce): Leads and Opportunities become contacts and deals; picklists become validated enums.
+- [Migrate from Attio](https://relmcrm.com/learn/migrate-from-attio): export per object; attributes map to Relm objects and custom fields.
+- [Migrate from Airtable or Google Sheets](https://relmcrm.com/learn/migrate-from-airtable): tables become objects; views become automations and agent queries.
+- [Migrate from GoHighLevel](https://relmcrm.com/learn/migrate-from-gohighlevel): sub-accounts map to workspaces, opportunities to deals; keep GHL for funnels.
+
+## Resources
+
+Copy-paste CRM templates, frameworks and playbooks - each ships an artifact (pipeline/fields/sequence/automation JSON, or an agent prompt) valid against the Relm API. Full library: [relmcrm.com/resources](https://relmcrm.com/resources).
+
+- Pipeline templates: [B2B SaaS sales](https://relmcrm.com/resources/b2b-saas-sales-pipeline-template), [fundraising](https://relmcrm.com/resources/fundraising-pipeline-template), [agency](https://relmcrm.com/resources/agency-client-pipeline-template), [recruiting](https://relmcrm.com/resources/recruiting-pipeline-template).
+- Qualification frameworks: [MEDDPICC](https://relmcrm.com/resources/meddpicc-qualification-checklist), [BANT](https://relmcrm.com/resources/bant-lead-qualification-template), [SPICED](https://relmcrm.com/resources/spiced-framework-template), [lead scoring](https://relmcrm.com/resources/lead-scoring-framework).
+- Outreach cadences: [cold outbound](https://relmcrm.com/resources/cold-outbound-cadence-template), [follow-up](https://relmcrm.com/resources/follow-up-sequence-templates), [re-engagement](https://relmcrm.com/resources/re-engagement-sequence-template), [renewal + expansion](https://relmcrm.com/resources/renewal-expansion-cadence).
+- Data models: [SaaS](https://relmcrm.com/resources/saas-crm-data-model), [agency](https://relmcrm.com/resources/agency-crm-data-model), [fundraising](https://relmcrm.com/resources/fundraising-crm-data-model), [hygiene checklist](https://relmcrm.com/resources/crm-hygiene-checklist).
+- Automation recipes: [10 automation recipes](https://relmcrm.com/resources/crm-automation-recipes), [drip sequences](https://relmcrm.com/resources/drip-sequence-recipes), [stage-change playbooks](https://relmcrm.com/resources/stage-change-playbooks), [webhook integrations cookbook](https://relmcrm.com/resources/crm-webhook-integrations-cookbook).
+- Agent playbooks: [daily pipeline review](https://relmcrm.com/resources/daily-pipeline-review-agent-prompt), [lead triage](https://relmcrm.com/resources/lead-triage-agent-playbook), [meeting notes to CRM](https://relmcrm.com/resources/meeting-notes-to-crm-agent-prompt), [weekly forecast](https://relmcrm.com/resources/weekly-forecast-agent-prompt).
+
+## Key facts
+
+- Errors are RFC-9457 problem+JSON with `valid_options` and `suggestion` so agents self-correct.
+- Pricing: Free 1,000 req/mo; Pro $29/mo = 100,000 req/mo; Scale $249/mo = 2,000,000 req/mo. Overage $0.0001/request on paid plans, with an optional hard spend cap.
+- Test mode is free and isolated from live data and billing. It is a sandbox, not storage - test records (contacts, companies, deals, activities) are auto-deleted 7 days after creation.

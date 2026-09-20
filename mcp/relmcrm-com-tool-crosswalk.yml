@@ -1,0 +1,332 @@
+generated: '2026-09-19'
+method: derived
+source: Derived by binding the 41 tools returned live by tools/list (mcp/relmcrm-com-mcp-tools-list.json, anonymous
+  HTTP 200) to the 72 operationIds in openapi/_original/relmcrm-com-openapi.json (OpenAPI 3.1.0, verbatim from https://relmcrm.com/openapi.json).
+  Both artifacts are provider-published and were fetched the same day, so every binding is by declared name/semantics
+  against a real inputSchema and a real operation.
+purpose: 'Make the MCP tool the discovery unit and bind it to the REST operation(s) that back it. Relm is unusually
+  explicit that REST, MCP and A2A are one surface: the OpenAPI info.description says every operation is also a typed
+  MCP tool, and the A2A endpoint runs the same tools by name. The crosswalk shows the MCP surface is a slightly
+  COARSER projection of REST (object-parameterised tools fan out to four operations each) with two REST operations
+  no tool reaches.'
+surfaces:
+  rest_openapi: openapi/relmcrm-com-openapi.yml (source openapi/_original/relmcrm-com-openapi.json; 72 operations,
+    41 paths, 25 schemas; base https://api.relmcrm.com/v1)
+  mcp: https://api.relmcrm.com/mcp (Streamable HTTP; initialize + tools/list anonymous; tools/call OAuth/API-key
+    gated)
+  a2a: https://api.relmcrm.com/a2a (JSON-RPC message/send with data part {tool, arguments}; runs the same 41 tools;
+    bearer required)
+  graphql: null
+crosswalk:
+- tool: relm_describe_schema
+  category: discovery
+  rest:
+  - getSchema
+  binding: rest
+  confidence: high
+- tool: relm_search
+  category: search
+  rest:
+  - search
+  binding: rest
+  confidence: high
+- tool: relm_list
+  category: records
+  rest:
+  - listContacts
+  - listCompanies
+  - listDeals
+  - listActivities
+  binding: rest
+  confidence: high
+  note: object enum selects which list operation; filter maps to that operation query parameters.
+- tool: relm_get
+  category: records
+  rest:
+  - getContact
+  - getCompany
+  - getDeal
+  - getActivity
+  binding: rest
+  confidence: high
+- tool: relm_create
+  category: records
+  rest:
+  - createContact
+  - createCompany
+  - createDeal
+  - createActivity
+  binding: rest
+  confidence: high
+  note: The REST creates take Idempotency-Key; the tool inputSchema exposes no equivalent, so replay safety over
+    MCP rests on the server.
+- tool: relm_update
+  category: records
+  rest:
+  - updateContact
+  - updateCompany
+  - updateDeal
+  - updateActivity
+  binding: rest
+  confidence: high
+  note: if_match input = the REST If-Match header (412 version_conflict on mismatch).
+- tool: relm_delete
+  category: records
+  rest:
+  - deleteContact
+  - deleteCompany
+  - deleteDeal
+  - deleteActivity
+  binding: rest
+  confidence: high
+  note: Soft delete; reversible via relm_restore.
+- tool: relm_restore
+  category: records
+  rest:
+  - restoreContact
+  - restoreCompany
+  - restoreDeal
+  - restoreActivity
+  binding: rest
+  confidence: high
+- tool: relm_log_activity
+  category: records
+  rest:
+  - createActivity
+  binding: rest
+  confidence: high
+  note: Convenience wrapper over the activity create.
+- tool: relm_list_pipelines
+  category: pipelines
+  rest:
+  - listPipelines
+  binding: rest
+  confidence: high
+- tool: relm_create_pipeline
+  category: pipelines
+  rest:
+  - createPipeline
+  binding: rest
+  confidence: high
+- tool: relm_manage_stage
+  category: pipelines
+  rest:
+  - addStage
+  - updateStage
+  - deleteStage
+  - reorderStages
+  binding: rest
+  confidence: high
+  note: action enum fans out to four REST operations.
+- tool: relm_create_type
+  category: registry
+  rest:
+  - createType
+  binding: rest
+  confidence: high
+- tool: relm_create_field
+  category: registry
+  rest:
+  - createField
+  binding: rest
+  confidence: high
+- tool: relm_create_enum_value
+  category: registry
+  rest:
+  - createEnumValue
+  binding: rest
+  confidence: high
+- tool: relm_batch
+  category: records
+  rest:
+  - batch
+  binding: rest
+  confidence: high
+- tool: relm_automations_capabilities
+  category: discovery
+  rest:
+  - automationsCapabilities
+  binding: rest
+  confidence: high
+- tool: relm_connect_channel
+  category: connections
+  rest:
+  - createConnection
+  binding: rest
+  confidence: high
+- tool: relm_list_connections
+  category: connections
+  rest:
+  - listConnections
+  binding: rest
+  confidence: high
+- tool: relm_create_automation
+  category: automations
+  rest:
+  - createAutomation
+  binding: rest
+  confidence: high
+- tool: relm_list_automations
+  category: automations
+  rest:
+  - listAutomations
+  binding: rest
+  confidence: high
+- tool: relm_create_template
+  category: templates
+  rest:
+  - createTemplate
+  binding: rest
+  confidence: high
+- tool: relm_list_templates
+  category: templates
+  rest:
+  - listTemplates
+  binding: rest
+  confidence: high
+- tool: relm_create_sequence
+  category: sequences
+  rest:
+  - createSequence
+  binding: rest
+  confidence: high
+- tool: relm_list_sequences
+  category: sequences
+  rest:
+  - listSequences
+  binding: rest
+  confidence: high
+- tool: relm_preview_sequence
+  category: sequences
+  rest:
+  - previewSequence
+  binding: rest
+  confidence: high
+  note: 'The only dry-run primitive on the surface: no side effects.'
+- tool: relm_enroll
+  category: sequences
+  rest:
+  - enroll
+  binding: rest
+  confidence: high
+- tool: relm_create_webhook
+  category: webhooks
+  rest:
+  - createWebhook
+  binding: rest
+  confidence: high
+- tool: relm_list_webhooks
+  category: webhooks
+  rest:
+  - listWebhooks
+  binding: rest
+  confidence: high
+- tool: relm_delete_webhook
+  category: webhooks
+  rest:
+  - deleteWebhook
+  binding: rest
+  confidence: high
+- tool: relm_get_automation
+  category: automations
+  rest:
+  - getAutomation
+  binding: rest
+  confidence: high
+- tool: relm_get_sequence
+  category: sequences
+  rest:
+  - getSequence
+  - listEnrollments
+  binding: rest
+  confidence: high
+  note: view=enrollments maps to listEnrollments.
+- tool: relm_get_pipeline
+  category: pipelines
+  rest:
+  - getPipeline
+  binding: rest
+  confidence: high
+- tool: relm_get_webhook
+  category: webhooks
+  rest:
+  - getWebhook
+  - listDeliveries
+  binding: rest
+  confidence: high
+  note: view=deliveries maps to listDeliveries.
+- tool: relm_manage_automation
+  category: automations
+  rest:
+  - setAutomationEnabled
+  - deleteAutomation
+  binding: rest
+  confidence: high
+  note: action enable/disable -> PATCH; action delete -> DELETE.
+- tool: relm_manage_sequence
+  category: sequences
+  rest:
+  - setSequenceEnabled
+  - deleteSequence
+  binding: rest
+  confidence: high
+- tool: relm_manage_pipeline
+  category: pipelines
+  rest:
+  - updatePipeline
+  - deletePipeline
+  - setDefaultPipeline
+  binding: rest
+  confidence: high
+- tool: relm_manage_webhook
+  category: webhooks
+  rest:
+  - updateWebhook
+  binding: rest
+  confidence: high
+  note: enable/disable via PATCH enabled.
+- tool: relm_delete_connection
+  category: connections
+  rest:
+  - deleteConnection
+  binding: rest
+  confidence: high
+- tool: relm_get_usage
+  category: discovery
+  rest:
+  - getUsage
+  binding: rest
+  confidence: high
+- tool: relm_set_spend_cap
+  category: billing
+  rest:
+  - setSettings
+  binding: rest
+  confidence: high
+  note: PATCH /settings {overage_cap_usd}.
+mcp_only: []
+rest_only:
+- operationId: deleteTemplate
+  reason: Templates have only create/list tools over MCP (relm_create_template, relm_list_templates); read-one,
+    update and delete are REST-only.
+- operationId: getSettings
+  reason: Read side of relm_set_spend_cap; the tool only writes. relm_get_usage returns plan/limit but not overage_cap_usd.
+- operationId: getTemplate
+  reason: Templates have only create/list tools over MCP (relm_create_template, relm_list_templates); read-one,
+    update and delete are REST-only.
+- operationId: listEnums
+  reason: No MCP tool lists an enum group alone; relm_describe_schema returns all enum groups inline.
+- operationId: updateTemplate
+  reason: Templates have only create/list tools over MCP (relm_create_template, relm_list_templates); read-one,
+    update and delete are REST-only.
+coverage:
+  tools: 41
+  tools_bound: 41
+  tools_mcp_only: 0
+  rest_operations: 72
+  rest_operations_bound: 67
+  rest_only: 5
+  confidence:
+    high: 41
+    medium: 0
+    low: 0

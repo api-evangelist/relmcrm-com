@@ -1,0 +1,49 @@
+generated: '2026-09-19'
+method: searched
+source: https://relmcrm.com/docs (Base URL & auth; Webhooks) + https://relmcrm.com/security (Test and live are separate) + https://relmcrm.com/llms.txt (Key facts) + https://relmcrm.com/ (live test-mode widget)
+checked: '2026-09-19'
+summary: >-
+  Relm's sandbox is a key-selected mode on the production host, not a separate environment: a relm_test_ key
+  writes to an isolated test dataset on the same base URL, same endpoints, same MCP server. Test mode is free,
+  unmetered, invisible to billing and to the live dashboard, and every record carries a mode field so data
+  never crosses. It is explicitly a sandbox rather than storage — test records auto-delete 7 days after
+  creation. OAuth tokens act on live data only, so the sandbox is reachable with API keys alone.
+modes:
+  selection: the key prefix decides the mode — relm_live_ (live) or relm_test_ (test); no header or separate host
+  base_url_same: true
+  base_url: https://api.relmcrm.com/v1
+  mcp_same_endpoint: true
+  key_prefixes:
+    live: relm_live_
+    test: relm_test_
+  minted_at: https://app.relmcrm.com/
+  keys_shown_once: true
+  keys_at_rest: SHA-256 hash (docs + security page)
+test_mode:
+  free: true
+  metered: false
+  counts_against_quota: false
+  visible_in_live_dashboard: false
+  data_isolation: every object carries a mode; test and live datasets never mix (https://relmcrm.com/security)
+  retention: test records (contacts, companies, deals, activities) are automatically deleted 7 days after creation
+  oauth_available: false
+  oauth_note: OAuth grants act on live data; test mode stays API-key only (https://relmcrm.com/docs, OAuth 2.1)
+  webhook_targets: test-mode keys may point webhooks at localhost; live-mode URLs must be public https (private, loopback and link-local hosts are rejected)
+try_without_account:
+  available: true
+  where: https://relmcrm.com/ — an in-page widget POSTs api.relmcrm.com/v1/contacts "for real, in free test mode" with no account or card
+test_values:
+  published: false
+  note: No fixed test identifiers, magic values or fixture data are published; test mode uses ordinary requests against an isolated dataset. Nothing here is invented.
+time_simulation:
+  available: false
+  note: No test clocks. Activities accept occurred_at to backdate imported history, which is a data field rather than a clock.
+dry_run:
+  available: partial
+  operations:
+  - operationId: previewSequence
+    tool: relm_preview_sequence
+    note: '"Dry-run: who would enroll now + the send schedule." No side effects. The only dry-run primitive on the surface; core object writes have no dry-run flag.'
+fixtures_and_tooling:
+  first_party: none beyond the SDK (npm relmcrm) and the batch endpoint
+  resources: https://relmcrm.com/resources publishes pipeline/field/sequence/automation JSON templates described as valid against the API

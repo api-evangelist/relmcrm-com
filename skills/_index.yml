@@ -1,0 +1,27 @@
+generated: '2026-09-19'
+method: generated
+source: >-
+  Packaged Agent Skills generated from openapi/relmcrm-com-openapi.yml (source openapi/_original/relmcrm-com-openapi.json,
+  OpenAPI 3.1.0, 72 operations). Every step is grounded in an operationId verified verbatim in the spec and,
+  where the same step exists as an MCP tool, names the tool from the live tools/list
+  (mcp/relmcrm-com-mcp-tools-list.json). Cross-cutting rules cite conventions/, errors/, authentication/ and
+  data-model/. Relm publishes no skills or AGENTS.md of its own (relmcrm.com/skills, /AGENTS.md and
+  /.well-known/skills/index.json all 404); its own agent guidance is the MCP server instructions, llms.txt and
+  the prompts under https://relmcrm.com/resources.
+skills:
+- file: relmcrm-com-create-contact-and-open-deal.md
+  name: Create a contact and open a deal
+  api: openapi/relmcrm-com-openapi.yml
+  operations: [getSchema, createCompany, createContact, createDeal, listPipelines]
+- file: relmcrm-com-import-leads-in-batch.md
+  name: Import leads in batch
+  api: openapi/relmcrm-com-openapi.yml
+  operations: [getSchema, createField, createEnumValue, batch, listContacts]
+- file: relmcrm-com-subscribe-and-verify-webhooks.md
+  name: Subscribe to and verify webhooks
+  api: openapi/relmcrm-com-openapi.yml
+  operations: [createWebhook, getWebhook, listDeliveries, updateWebhook, deleteWebhook]
+- file: relmcrm-com-move-deal-and-log-activity.md
+  name: Move a deal and log the activity
+  api: openapi/relmcrm-com-openapi.yml
+  operations: [getDeal, getPipeline, updateDeal, createActivity, listActivities]

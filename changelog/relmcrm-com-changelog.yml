@@ -1,0 +1,92 @@
+generated: '2026-09-19'
+method: searched
+source: https://relmcrm.com/changelog
+checked: '2026-09-19'
+summary: >-
+  A dated, versioned, server-rendered changelog ("What's new in Relm - newest first") with New / Improved /
+  Fixed labels per item. Versions are semver product releases that the OpenAPI info.version, the agent card
+  and the MCP serverInfo track exactly (all 0.17.1). No feed. The recent window shows fourteen releases in
+  nine days around launch (2026-07-20 to 2026-07-28) and nothing after 2026-07-28.
+scheme:
+  api_versioning: path (/v1) + semver product version tag per entry
+  labels: [New, Improved, Fixed]
+current_version:
+  changelog: 0.17.1
+  openapi_info_version: 0.17.1
+  agent_card_version: 0.17.1
+  mcp_server_version: 0.17.1
+  agree: true
+feeds:
+  rss: null
+  atom: null
+  json: null
+entries:
+- version: 0.17.1
+  date: '2026-07-28'
+  breaking: false
+  fixed: ['"Use a different account" on the connect screen — reconnecting no longer silently reuses whoever was already signed in.']
+- version: 0.17.0
+  date: '2026-07-28'
+  breaking: false
+  fixed: [The Allow button now completes in ChatGPT (a security header had blocked the hop back to the app; clickjacking protection stays).]
+  additions: [Connected apps in the dashboard — see every app connected to your workspace and disconnect it; disconnecting revokes all of its access immediately.]
+- version: 0.16.0
+  date: '2026-07-26'
+  breaking: false
+  improved: [Every tool now declares its auth and safety hints in the shape the ChatGPT app review checks; domain-verification endpoint in place — groundwork for the Claude and ChatGPT directories.]
+- version: 0.14.0 / 0.15.0
+  date: '2026-07-25'
+  breaking: false
+  additions: [Six-digit email confirmation code at sign-up, entered inside the connect window.]
+  improved: [Codes last 15 minutes, work once, and requesting a new one retires the old.]
+- version: 0.13.0
+  date: '2026-07-25'
+  breaking: false
+  additions: [Create a Relm account without leaving the connect window.]
+  fixed: [The approval screen names the actual destination and marks the app's self-declared name as unverified., Anti-clickjacking protection on the approval screen; rate limits on sign-in and sign-up.]
+- version: 0.12.0
+  date: '2026-07-25'
+  breaking: false
+  improved: [Reading and changing are separate tools now (41 in total), so clients only stop to confirm when something will actually be changed or deleted.]
+  additions: [Every tool declares what it does — read-only, destructive, repeatable — so clients can decide what needs approval.]
+- version: 0.11.0
+  date: '2026-07-25'
+  breaking: false
+  additions: [OAuth 2.1 — point a client at the server and approve in the browser; apps register themselves automatically and can be disconnected at any time.]
+  fixed: [Unauthorised calls now return a proper authorisation challenge (which makes the Connect button appear) instead of looking like a working tool that always errored.]
+  improved: [API keys work exactly as before — OAuth is an extra door, not a replacement.]
+- version: 0.10.0
+  date: '2026-07-25'
+  breaking: false
+  fixed: [Links with a stray full stop or bracket land on the right page., Sign-ups are now recorded in analytics.]
+- version: 0.9.2
+  date: '2026-07-24'
+  breaking: false
+  additions: [Pipeline and stage editing in the dashboard.]
+  improved: [Won/lost at a glance — stage type dots and tinted kanban columns; deals show the stage display label.]
+- version: 0.9.1
+  date: '2026-07-21'
+  breaking: false
+  improved:
+  - Pipeline keys can be renamed via PATCH /v1/pipelines/{key} — deals follow automatically.
+  fixed: [Deleting a pipeline frees its key for reuse.]
+- version: 0.9.0
+  date: '2026-07-20'
+  breaking: false
+  additions:
+  - Stages have a type — open, won, or lost — carried on every deal as stage_type.
+  - Rename a stage over the API — PATCH /v1/pipelines/{key}/stages/{stage}.
+  improved: [Each deal returns the pipeline name and the stage label/type., A 404 on the API hands back the valid routes and a hint.]
+- version: 0.8.6
+  date: '2026-07-20'
+  breaking: false
+  fixed: [Deal amounts formatted as money in the dashboard.]
+- version: 0.8.5
+  date: '2026-07-20'
+  breaking: false
+  fixed: [Dashboard no longer scrolls sideways on phones.]
+- version: 0.8.4
+  date: '2026-07-20'
+  breaking: false
+  improved: [Left sidebar navigation in the dashboard.]
+entries_note: Older entries exist below v0.8.4 on the page and were not transcribed; the window above is the recent one. Every dated change is additive or a fix; no entry is marked breaking.

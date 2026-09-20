@@ -1,0 +1,64 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  https://relmcrm.com/docs (Webhooks section, with the HMAC verification sample) + https://relmcrm.com/llms.txt
+  (Objects: Webhooks) + openapi/_original/relmcrm-com-openapi.json (Webhooks tag: createWebhook, listWebhooks,
+  getWebhook, updateWebhook, deleteWebhook, listDeliveries; WebhookInput / Webhook schemas; AutomationInput
+  trigger_event enum) + relm_create_webhook tool description in mcp/relmcrm-com-mcp-tools-list.json
+checked: '2026-09-19'
+summary: >-
+  Relm has a real, customer-registerable webhook surface — five CRM events, HMAC-SHA256 signed deliveries with
+  a timestamped signature header, a documented retry schedule with dead-lettering after six attempts, and a
+  deliveries endpoint for inspection — but ships NO AsyncAPI document and no OpenAPI webhooks/callbacks block.
+  This file is the webhook catalog captured from the docs; a Webhooks pointer is emitted, an AsyncAPI pointer is
+  not.
+asyncapi:
+  present: false
+  probed:
+  - {url: https://relmcrm.com/asyncapi.json, status: 404}
+  - {url: https://relmcrm.com/asyncapi.yaml, status: 404}
+  openapi_webhooks_block: false
+  openapi_callbacks: false
+webhooks:
+  customer_registerable: true
+  register: POST /v1/webhooks (createWebhook) / relm_create_webhook — body {url, events[], description, enabled}
+  manage: [listWebhooks, getWebhook, updateWebhook (If-Match; enabled true/false pauses delivery), deleteWebhook, listDeliveries]
+  secret: whsec_... returned ONLY on create; store it — it cannot be re-read
+  subscription_filter: events[] is a subset of the five events, or ["*"] for all
+  target_rules:
+    live: must be public https; private, loopback and link-local hosts are rejected and re-checked at delivery (privacy policy)
+    test: test-mode keys may point at localhost
+  scope: per workspace and mode (test and live subscriptions are separate)
+events:
+- {name: contact.created, object: contact}
+- {name: contact.updated, object: contact}
+- {name: deal.created, object: deal}
+- {name: deal.updated, object: deal}
+- {name: deal.stage_changed, object: deal}
+events_note: >-
+  The same five names are the AutomationInput.trigger_event enum in the OpenAPI, so automations and webhooks
+  subscribe to one event vocabulary. No company.* or activity.* events are published. POST /v1/batch is
+  "event-silent" — bulk writes do not fire webhooks or automations.
+delivery:
+  method: POST
+  content_type: application/json
+  headers:
+  - {name: Relm-Event, meaning: the event name}
+  - {name: Relm-Delivery, meaning: delivery id}
+  - {name: Relm-Signature, meaning: 't=<unix>,v1=<hmac>'}
+  signature:
+    algorithm: HMAC-SHA256
+    signed_payload: '<t>.<raw body>'
+    key: the subscription's whsec_ secret
+    verification: recompute the HMAC and compare to v1 in constant time (docs ship a Node crypto.timingSafeEqual sample)
+  retries:
+    trigger: non-2xx response or timeout
+    schedule: [1m, 5m, 30m, 2h, 6h]
+    max_attempts: 6
+    dead_letter: after 6 attempts
+  inspection: GET /v1/webhooks/{id}/deliveries (listDeliveries) / relm_get_webhook view=deliveries
+  payload_schema_published: false
+  payload_note: The docs describe the delivery as "a JSON POST" but publish no payload schema or example body; nothing is invented here.
+streaming:
+  present: false
+  note: MCP capabilities declare no resources/prompts and the A2A card declares streaming false and pushNotifications false; there is no SSE or WebSocket surface.

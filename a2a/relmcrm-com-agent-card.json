@@ -1,0 +1,129 @@
+{
+  "protocolVersion": "0.3.0",
+  "name": "Relm CRM",
+  "description": "An API-first CRM built for LLMs and AI agents. Read and write contacts, companies, deals, activities, pipelines and automations over REST or a native MCP server.",
+  "url": "https://api.relmcrm.com/a2a",
+  "preferredTransport": "JSONRPC",
+  "additionalInterfaces": [
+    {
+      "transport": "JSONRPC",
+      "url": "https://api.relmcrm.com/a2a"
+    }
+  ],
+  "provider": {
+    "organization": "Relm",
+    "url": "https://relmcrm.com/"
+  },
+  "documentationUrl": "https://relmcrm.com/docs",
+  "version": "0.17.1",
+  "defaultInputModes": [
+    "application/json",
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "application/json"
+  ],
+  "securitySchemes": {
+    "oauth2": {
+      "type": "oauth2",
+      "description": "OAuth 2.1 with PKCE and dynamic client registration. Recommended for end-user agents.",
+      "flows": {
+        "authorizationCode": {
+          "authorizationUrl": "https://api.relmcrm.com/oauth/authorize",
+          "tokenUrl": "https://api.relmcrm.com/oauth/token",
+          "scopes": {
+            "crm": "Read and write the connected Relm workspace"
+          }
+        }
+      }
+    },
+    "bearer": {
+      "type": "http",
+      "scheme": "bearer",
+      "description": "Workspace API key (relm_live_... or relm_test_...) minted at https://app.relmcrm.com/"
+    }
+  },
+  "security": [
+    {
+      "oauth2": [
+        "crm"
+      ]
+    },
+    {
+      "bearer": []
+    }
+  ],
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false
+  },
+  "skills": [
+    {
+      "id": "manage-contacts",
+      "name": "Manage contacts",
+      "description": "Create, find, update and delete people. Email-optional; email is unique per workspace.",
+      "tags": [
+        "crm",
+        "contacts"
+      ]
+    },
+    {
+      "id": "manage-companies",
+      "name": "Manage companies",
+      "description": "Create and link accounts; contacts and deals reference them.",
+      "tags": [
+        "crm",
+        "companies"
+      ]
+    },
+    {
+      "id": "manage-deals",
+      "name": "Manage deals",
+      "description": "Open opportunities and move them across pipeline stages.",
+      "tags": [
+        "crm",
+        "deals",
+        "pipeline"
+      ]
+    },
+    {
+      "id": "log-activities",
+      "name": "Log activities",
+      "description": "Record notes, calls, emails and meetings, with backdating.",
+      "tags": [
+        "crm",
+        "activities"
+      ]
+    },
+    {
+      "id": "automate",
+      "name": "Automations",
+      "description": "Create event-triggered rules and drip sequences, including send-email.",
+      "tags": [
+        "crm",
+        "automation",
+        "sequences"
+      ]
+    },
+    {
+      "id": "webhooks",
+      "name": "Webhooks",
+      "description": "Subscribe an https endpoint to CRM events; deliveries are HMAC-signed and retried.",
+      "tags": [
+        "crm",
+        "webhooks",
+        "events"
+      ]
+    },
+    {
+      "id": "describe-schema",
+      "name": "Describe schema",
+      "description": "Read the live object/field/enum registry so writes are never based on a guess.",
+      "tags": [
+        "crm",
+        "schema",
+        "discovery"
+      ]
+    }
+  ]
+}

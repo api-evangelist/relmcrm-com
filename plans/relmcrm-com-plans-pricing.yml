@@ -1,0 +1,62 @@
+generated: '2026-09-19'
+method: searched
+source: https://relmcrm.com/#pricing
+checked: '2026-09-19'
+corroboration: https://relmcrm.com/docs (Rate limits & quotas table) + https://relmcrm.com/llms.txt (Key facts) state the same three tiers and prices.
+summary: >-
+  Three self-serve tiers priced per API request rather than per seat ("because your main user is a machine").
+  Free 1,000 requests/month with no credit card; Pro $29/month for 100,000; Scale $249/month for 2,000,000.
+  Overage on paid plans is metered at $0.0001 per request with an optional hard spend cap the customer sets
+  (PATCH /v1/settings overage_cap_usd; a $0 cap makes a paid plan hard-stop like Free). Test mode is free,
+  unmetered and never counts. No enterprise or contact-sales tier is published; nav link /pricing 404s — the
+  pricing lives in the #pricing section of the home page.
+plan_count: 3
+prices_published: true
+currency: USD
+billing_period: monthly
+public_signup_pricing: true
+signup_url: https://app.relmcrm.com/
+plans:
+- name: Free
+  price: 0
+  currency: USD
+  billing_period: monthly
+  included_quota: 1000 API requests / month
+  overage: none — hard-stops with 429 quota_exceeded at the cap
+  limits:
+    automations: 2
+    sequences: 1
+    limits_source: https://relmcrm.com/docs (403 plan_limit — "Free allows 2 automations / 1 sequence")
+  includes:
+  - Full REST API + MCP server
+  - Unmetered free test mode
+  - Signed webhooks & custom fields
+  credit_card_required: false
+- name: Pro
+  price: 29
+  currency: USD
+  billing_period: monthly
+  included_quota: 100000 API requests / month
+  overage: $0.0001 per request past the cap, metered; optional hard spend cap
+  includes:
+  - Everything in Free
+  - Metered overage past the cap
+  - Hard spend cap you control
+  - Transactional email (BYO Resend)
+  positioning: most popular
+- name: Scale
+  price: 249
+  currency: USD
+  billing_period: monthly
+  included_quota: 2000000 API requests / month
+  overage: $0.0001 per request past the cap, metered; optional hard spend cap
+  includes:
+  - Everything in Pro
+  - Top-tier rate limits
+  - Priority support
+metering_notes:
+- Batch (POST /v1/batch, relm_batch) is metered per operation, not per call — batching saves round-trips, not quota.
+- A single MCP POST carrying an array of tool calls is metered per call.
+- Test-mode (relm_test_) requests never count against quota.
+- GET /v1/usage returns period, used, overage, limit and plan for the current billing period.
+- Terms (https://relmcrm.com/terms) allow price changes with 30 days' notice by email and on the changelog.

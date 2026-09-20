@@ -1,0 +1,801 @@
+generated: '2026-09-19'
+method: probed
+status: published
+source: POST https://api.relmcrm.com/mcp {"jsonrpc":"2.0","id":1,"method":"tools/list"} (anonymous, HTTP 200) +
+  https://relmcrm.com/.well-known/mcp.json + https://relmcrm.com/docs#mcp
+summary: 'Relm ships a first-party hosted MCP server at https://api.relmcrm.com/mcp (Streamable HTTP). The tool
+  catalog is deliberately public: an anonymous initialize and tools/list both answer HTTP 200 with the full 41-tool
+  list, every tool carrying an inputSchema, MCP annotations (readOnlyHint/destructiveHint/openWorldHint) and a securitySchemes[]
+  declaring oauth2 scope crm. tools/call is gated: an anonymous call returns JSON-RPC error -32001 with WWW-Authenticate:
+  Bearer realm="Relm", resource_metadata="https://api.relmcrm.com/.well-known/oauth-protected-resource" (observed
+  2026-09-19), which is the RFC 9728 discovery hop an MCP client needs to offer OAuth. The same 41 tools are what
+  the A2A endpoint runs (a message/send data part {tool, arguments}) and what the 72-operation REST surface exposes;
+  see mcp/relmcrm-com-tool-crosswalk.yml for the binding.'
+deployment:
+  mode: remote
+  endpoint: https://api.relmcrm.com/mcp
+  install: null
+  package: null
+  auth: oauth
+  auth_note: OAuth 2.1 (authorization_code + PKCE S256 + refresh, RFC 7591 dynamic client registration at https://api.relmcrm.com/oauth/register,
+    scope crm) OR a workspace bearer key relm_live_/relm_test_ in the Authorization header. OAuth acts on live data
+    only; test mode is API-key only (docs).
+  verified: probed
+server:
+  name: relm
+  title: Relm CRM
+  version: 0.17.1
+  transport: streamable-http
+  url: https://api.relmcrm.com/mcp
+  protocol_version_negotiated: '2025-06-18'
+  capabilities:
+    tools:
+      listChanged: false
+    resources: false
+    prompts: false
+  instructions: Relm - the CRM your agent owns. Call relm_describe_schema first to learn what objects, types and
+    fields exist. On any 'unknown_value' error, read valid_options and either use a listed value or create it (relm_create_enum_value
+    / relm_create_field / relm_create_type).
+  descriptor: well-known/relmcrm-com-mcp.json
+  directory_listings_claimed: Changelog v0.16.0 (2026-07-26) says the tools declare auth/safety hints in the shape
+    the ChatGPT app review checks and a domain-verification endpoint is in place as groundwork for the Claude and
+    ChatGPT directories; no listing was verified by this pass.
+auth:
+  methods:
+  - oauth2
+  - bearer-api-key
+  oauth2:
+    issuer: https://api.relmcrm.com
+    authorization_endpoint: https://api.relmcrm.com/oauth/authorize
+    token_endpoint: https://api.relmcrm.com/oauth/token
+    registration_endpoint: https://api.relmcrm.com/oauth/register
+    revocation_endpoint: https://api.relmcrm.com/oauth/revoke
+    scopes_supported:
+    - crm
+    grant_types:
+    - authorization_code
+    - refresh_token
+    pkce: S256
+    token_endpoint_auth_methods:
+    - none
+    - client_secret_post
+    - client_secret_basic
+    discovery: well-known/relmcrm-com-oauth-authorization-server.json
+    protected_resource: well-known/relmcrm-com-oauth-protected-resource.json
+  api_key:
+    header: 'Authorization: Bearer relm_live_... | relm_test_...'
+    minted_at: https://app.relmcrm.com/
+  anonymous_call_challenge:
+    jsonrpc_error_code: -32001
+    www_authenticate: Bearer realm="Relm", resource_metadata="https://api.relmcrm.com/.well-known/oauth-protected-resource"
+    observed: '2026-09-19'
+client_config_example:
+  mcpServers:
+    relm:
+      type: http
+      url: https://api.relmcrm.com/mcp
+      headers:
+        Authorization: Bearer relm_live_...
+tool_count: 41
+tools_read_only: 17
+tools_destructive: 8
+tools_raw: mcp/relmcrm-com-mcp-tools-list.json
+tools:
+- name: relm_describe_schema
+  category: discovery
+  title: Describe CRM schema
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs: []
+  inputs: []
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: 'Return the live schema: every object, its fields (built-in + custom), and all enum groups with their
+    current values (contact types, activity types, etc). ALWAYS call this before guessing a type, stage, or field
+    - it is the source of truth for what exists.'
+- name: relm_search
+  category: search
+  title: Search CRM
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs:
+  - query
+  inputs:
+  - limit
+  - query
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Cross-entity search over contacts, companies and deals by name/email/title.
+- name: relm_list
+  category: records
+  title: List records
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs:
+  - object
+  inputs:
+  - cursor
+  - filter
+  - limit
+  - object
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: 'List records of an object with keyset pagination. Optional filters vary by object (e.g. contact:
+    email/company_id/type; deal: pipeline/stage/company_id; activity: contact_id/deal_id/type).'
+- name: relm_get
+  category: records
+  title: Get record
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs:
+  - object
+  - id
+  inputs:
+  - id
+  - object
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Fetch one record by id.
+- name: relm_create
+  category: records
+  title: Create record
+  read_only: false
+  destructive: false
+  open_world: false
+  required_inputs:
+  - object
+  - data
+  inputs:
+  - data
+  - object
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: 'Create a record. `data` is the object''s fields (see relm_describe_schema). Custom fields must be
+    registered first (relm_create_field). A contact needs at least one of: a name, an identifier (email/phone/linkedin_url),
+    a company, or a custom field (email is unique per workspace) - don''t invent a placeholder email.'
+- name: relm_update
+  category: records
+  title: Update record
+  read_only: false
+  destructive: false
+  open_world: false
+  required_inputs:
+  - object
+  - id
+  - patch
+  inputs:
+  - id
+  - if_match
+  - object
+  - patch
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Patch a record. Pass if_match (the record's current version) for optimistic concurrency; a 412 means
+    re-fetch and retry.
+- name: relm_delete
+  category: records
+  title: Delete record (recoverable)
+  read_only: false
+  destructive: true
+  open_world: false
+  required_inputs:
+  - object
+  - id
+  inputs:
+  - id
+  - object
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Soft-delete a record (recoverable via relm_restore). Never hard-destroys data.
+- name: relm_restore
+  category: records
+  title: Restore deleted record
+  read_only: false
+  destructive: false
+  open_world: false
+  required_inputs:
+  - object
+  - id
+  inputs:
+  - id
+  - object
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Restore a soft-deleted record.
+- name: relm_log_activity
+  category: records
+  title: Log activity
+  read_only: false
+  destructive: false
+  open_world: false
+  required_inputs: []
+  inputs:
+  - body
+  - contact_id
+  - deal_id
+  - type
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Log an activity (note/call/email/meeting/task) on a contact and/or deal. Convenience wrapper over
+    create activity.
+- name: relm_list_pipelines
+  category: pipelines
+  title: List pipelines
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs: []
+  inputs: []
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: List pipelines with their ordered stages.
+- name: relm_create_pipeline
+  category: pipelines
+  title: Create pipeline
+  read_only: false
+  destructive: false
+  open_world: false
+  required_inputs: []
+  inputs:
+  - is_default
+  - key
+  - name
+  - stages
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Create a pipeline. Optionally provide stages [{key,label}] (defaults to lead/qualified/proposal/won/lost)
+    and is_default.
+- name: relm_manage_stage
+  category: pipelines
+  title: Manage pipeline stages
+  read_only: false
+  destructive: true
+  open_world: false
+  required_inputs:
+  - pipeline
+  - action
+  inputs:
+  - action
+  - key
+  - label
+  - new_key
+  - order
+  - ordinal
+  - pipeline
+  - type
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: 'Add, rename/retype, delete, or reorder stages in a pipeline. action=add: `key` (+optional label,
+    ordinal, type). action=rename: `key` (existing) + any of new_key / label / type - keys are slugified and deals
+    follow automatically (fixes a typo''d key). action=delete: `key` (a stage in use by deals cannot be deleted).
+    action=reorder: `order` = every existing stage key exactly once, in the new order. `type` is the semantic stage
+    type: open | won | lost - so ''is this deal won?'' is a flag (stage_type on every deal), not per-pipeline string
+    matching.'
+- name: relm_create_type
+  category: registry
+  title: Register object type
+  read_only: false
+  destructive: false
+  open_world: false
+  required_inputs:
+  - key
+  inputs:
+  - key
+  - label
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Register a new object type in the schema (registry). Idempotent on key; returns the full type set.
+- name: relm_create_field
+  category: registry
+  title: Register custom field
+  read_only: false
+  destructive: false
+  open_world: false
+  required_inputs:
+  - object
+  - key
+  inputs:
+  - data_type
+  - enum_group
+  - key
+  - label
+  - object
+  - required
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: 'Register a new custom field on an object (contact/company/deal/activity). data_type: text|number|boolean|date|select|multiselect|currency|reference|email|url.
+    Must be created before it can be written to a record.'
+- name: relm_create_enum_value
+  category: registry
+  title: Add enum value
+  read_only: false
+  destructive: false
+  open_world: false
+  required_inputs:
+  - group
+  - value
+  inputs:
+  - group
+  - label
+  - value
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Add a value to an enum group (e.g. group 'contact.type' value 'partner'). Idempotent; returns the
+    full value set. Use this when relm_create rejects an unknown type with a valid_options list.
+- name: relm_batch
+  category: records
+  title: Batch write records
+  read_only: false
+  destructive: true
+  open_world: false
+  required_inputs:
+  - operations
+  inputs:
+  - operations
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: 'Run up to 100 record writes in ONE call (contact/company/deal/activity) - the fast path for imports/migrations.
+    operations: [{object, method:create|update|delete, data|patch, id?}]. Returns a per-op result array (partial
+    success). Every op still counts against your quota (batch saves round-trips, not quota).'
+- name: relm_automations_capabilities
+  category: discovery
+  title: Describe automation capabilities
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs: []
+  inputs: []
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: 'Discover the automation building blocks: valid trigger_events, condition ops, action types, channels/providers,
+    and the shapes of automations/sequences/connections. Call before building a rule or sequence.'
+- name: relm_connect_channel
+  category: connections
+  title: Connect messaging channel
+  read_only: false
+  destructive: false
+  open_world: true
+  required_inputs:
+  - api_key
+  inputs:
+  - api_key
+  - channel
+  - from
+  - name
+  - provider
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Connect a BYO messaging channel so automations can send. channel='email', provider='resend', api_key=<your
+    Resend key>, from='Team <hi@you.com>' (must be a verified Resend sender). The key is encrypted at rest.
+- name: relm_list_connections
+  category: connections
+  title: List connected channels
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs: []
+  inputs: []
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: List connected messaging channels (never returns the secret key).
+- name: relm_create_automation
+  category: automations
+  title: Create automation rule
+  read_only: false
+  destructive: false
+  open_world: true
+  required_inputs:
+  - name
+  - trigger_event
+  - actions
+  inputs:
+  - actions
+  - conditions
+  - enabled
+  - name
+  - trigger_event
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: 'Create a single-step rule: when <trigger_event> [if <conditions>] then <actions>. conditions=[{field,op,value}]
+    (ANDed), actions=[{type,...}]. Example: trigger_event=''deal.stage_changed'', conditions=[{field:''stage'',op:''eq'',value:''won''}],
+    actions=[{type:''create_activity'',body:''Deal won!''}]. See relm_automations_capabilities.'
+- name: relm_list_automations
+  category: automations
+  title: List automation rules
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs: []
+  inputs: []
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: List reactive rules (automations).
+- name: relm_create_template
+  category: templates
+  title: Create email template
+  read_only: false
+  destructive: false
+  open_world: false
+  required_inputs:
+  - name
+  - html
+  inputs:
+  - html
+  - key
+  - name
+  - subject
+  - text
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Create a reusable email template. name, html (full HTML, {{field}} placeholders ok), optional subject
+    + text (plaintext alt; auto-derived if omitted). Reference it from a rule/sequence step via {"type":"send_email","template":"<key
+    or tmpl_id>"}.
+- name: relm_list_templates
+  category: templates
+  title: List email templates
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs: []
+  inputs: []
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: List reusable email templates.
+- name: relm_create_sequence
+  category: sequences
+  title: Create drip sequence
+  read_only: false
+  destructive: false
+  open_world: true
+  required_inputs:
+  - name
+  - steps
+  inputs:
+  - channel
+  - connection
+  - enabled
+  - enroll_existing
+  - exit_when
+  - name
+  - steps
+  - trigger
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: 'Create a multi-step drip sequence. trigger={event,filter:[{field,op,value}]} auto-enrolls the matching
+    entity''s contact; exit_when=[{field,op,value}] stops it (re-checked before every send); steps=[{wait_days,subject,body}]
+    (first step wait_days:0 sends now). enroll_existing:true also enrolls everything that currently matches. Example:
+    3 emails to contacts of deals entering stage ''lead'', stop if the deal leaves ''lead''.'
+- name: relm_list_sequences
+  category: sequences
+  title: List drip sequences
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs: []
+  inputs: []
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: List drip sequences with their steps and enrollment counts.
+- name: relm_preview_sequence
+  category: sequences
+  title: Preview sequence (dry run)
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs:
+  - id
+  inputs:
+  - id
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: 'Dry-run a sequence: how many contacts would enroll now + the send schedule. No side effects.'
+- name: relm_enroll
+  category: sequences
+  title: Enroll contact in sequence
+  read_only: false
+  destructive: false
+  open_world: true
+  required_inputs:
+  - sequence_id
+  - contact_id
+  inputs:
+  - contact_id
+  - sequence_id
+  - source
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Manually enroll a contact into a sequence (idempotent per contact+sequence). Optional source={object,id}
+    records what drove the enrollment (e.g. a deal).
+- name: relm_create_webhook
+  category: webhooks
+  title: Create webhook subscription
+  read_only: false
+  destructive: false
+  open_world: true
+  required_inputs:
+  - url
+  inputs:
+  - description
+  - enabled
+  - events
+  - url
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Subscribe an https endpoint to CRM events. events=['*'] for all, or a subset of ['contact.created','contact.updated','deal.created','deal.updated','deal.stage_changed'].
+    Returns a `secret` ONCE - the subscriber verifies the `Relm-Signature` header (t=<unix>,v1=<hmac-sha256 of "t.body">).
+    Deliveries retry with backoff and dead-letter after 6 attempts.
+- name: relm_list_webhooks
+  category: webhooks
+  title: List webhooks
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs: []
+  inputs: []
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: List webhook subscriptions in this workspace/mode.
+- name: relm_delete_webhook
+  category: webhooks
+  title: Delete webhook
+  read_only: false
+  destructive: true
+  open_world: true
+  required_inputs:
+  - id
+  inputs:
+  - id
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Delete a webhook subscription by id.
+- name: relm_get_automation
+  category: automations
+  title: Get automation
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs:
+  - id
+  inputs:
+  - id
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Read one automation by id, with its trigger, conditions and actions.
+- name: relm_get_sequence
+  category: sequences
+  title: Get sequence
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs:
+  - id
+  inputs:
+  - id
+  - view
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Read one drip sequence by id. view=sequence (default) returns it with its steps; view=enrollments
+    lists who is enrolled and their state.
+- name: relm_get_pipeline
+  category: pipelines
+  title: Get pipeline
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs:
+  - pipeline
+  inputs:
+  - pipeline
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Read one pipeline by key or pl_ id, with its ordered stages and their semantic types (open/won/lost).
+- name: relm_get_webhook
+  category: webhooks
+  title: Get webhook
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs:
+  - id
+  inputs:
+  - id
+  - view
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Read one webhook by id. view=webhook (default) returns the subscription; view=deliveries returns
+    recent delivery attempts (status, retries, dead-letter) to debug why an endpoint isn't receiving events.
+- name: relm_manage_automation
+  category: automations
+  title: Manage automation
+  read_only: false
+  destructive: true
+  open_world: true
+  required_inputs:
+  - id
+  - action
+  inputs:
+  - action
+  - id
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Change an existing automation by id. action=disable stops it firing (use this to turn off a misbehaving
+    rule); action=enable resumes it; action=delete removes it. To read one, use relm_get_automation. To change a
+    rule's trigger/conditions/actions, delete and recreate.
+- name: relm_manage_sequence
+  category: sequences
+  title: Manage sequence
+  read_only: false
+  destructive: true
+  open_world: true
+  required_inputs:
+  - id
+  - action
+  inputs:
+  - action
+  - id
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Change an existing drip sequence by id. action=disable stops further sends (use this to halt a bad
+    sequence); action=enable resumes; action=delete removes it. To read one or list its enrollments, use relm_get_sequence.
+- name: relm_manage_pipeline
+  category: pipelines
+  title: Manage pipeline
+  read_only: false
+  destructive: true
+  open_world: false
+  required_inputs:
+  - pipeline
+  - action
+  inputs:
+  - action
+  - name
+  - new_key
+  - pipeline
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Change an existing pipeline by key or pl_ id. action=rename changes its display `name` and/or its
+    key (pass `new_key`) - deals link by internal id, so they follow a re-key automatically; action=set_default
+    makes it the workspace default; action=delete removes it (fails if deals still use it - move them first). To
+    read one, use relm_get_pipeline.
+- name: relm_manage_webhook
+  category: webhooks
+  title: Toggle webhook
+  read_only: false
+  destructive: false
+  open_world: true
+  required_inputs:
+  - id
+  - action
+  inputs:
+  - action
+  - id
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Pause or resume delivery for an existing webhook by id. action=enable/disable. To read one or inspect
+    its delivery attempts, use relm_get_webhook. To remove it, use relm_delete_webhook.
+- name: relm_delete_connection
+  category: connections
+  title: Delete channel connection
+  read_only: false
+  destructive: true
+  open_world: false
+  required_inputs:
+  - id
+  inputs:
+  - id
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: Delete a connected messaging channel by id (e.g. to remove a rotated/wrong Resend key).
+- name: relm_get_usage
+  category: discovery
+  title: Get usage and quota
+  read_only: true
+  destructive: false
+  open_world: false
+  required_inputs: []
+  inputs: []
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: 'Read this workspace''s current billing period: requests used, plan, monthly limit, and any metered
+    overage. Call this to see how close you are to the quota before a big import.'
+- name: relm_set_spend_cap
+  category: billing
+  title: Set overage spend cap
+  read_only: false
+  destructive: false
+  open_world: false
+  required_inputs:
+  - overage_cap_usd
+  inputs:
+  - overage_cap_usd
+  security:
+  - type: oauth2
+    scopes:
+    - crm
+  description: 'Set (or clear) the hard monthly overage spend cap in USD. overage_cap_usd: a number caps paid overage
+    (requests 429 with spend_cap_reached past it), 0 = never any overage, null = unlimited. This is the recovery
+    for a spend_cap_reached error.'

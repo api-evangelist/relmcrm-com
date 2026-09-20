@@ -1,0 +1,60 @@
+generated: '2026-09-19'
+method: searched
+format: rfc9457
+source: >-
+  https://relmcrm.com/errors (the provider's error reference — 20 codes) + https://relmcrm.com/docs (Errors
+  table) + openapi/_original/relmcrm-com-openapi.json (components.schemas.Problem, components.responses.Problem
+  bound as the `default` response on all 72 operations) + a live 401 observed on GET
+  https://api.relmcrm.com/v1/schema (2026-09-19).
+rfc9457: true
+envelope:
+  media_type: application/problem+json
+  schema: Problem
+  fields:
+  - {name: type, type: uri, description: 'Stable URI https://relmcrm.com/errors/<code>; each resolves (200) to a short reference page.'}
+  - {name: title, type: string, description: Human title.}
+  - {name: status, type: integer, description: HTTP status.}
+  - {name: detail, type: string, description: Human explanation.}
+  - {name: code, type: string, description: Machine code (the <code> in type).}
+  - {name: field, type: string, description: The offending field where one exists.}
+  - {name: valid_options, type: array<string>, description: The closed set of acceptable values, on closed-set rejections.}
+  - {name: suggestion, type: string, description: The nearest valid value, where one can be computed.}
+  - {name: request_id, type: string, description: req_... correlation id; quote it to support.}
+  observed_live: >-
+    GET /v1/schema without a key returned 401 application/problem+json with type
+    https://relmcrm.com/errors/unauthorized, title Unauthorized, status 401, detail, code, request_id — plus a
+    duplicate `error: {code, message, request_id}` object the spec does not declare (a compatibility shadow).
+spec_declaration: >-
+  The OpenAPI declares only 200/201 successes plus one `default` -> #/components/responses/Problem on every
+  operation; individual 4xx codes are NOT enumerated per operation. The per-code table below therefore comes
+  from the provider's error reference, not from the spec.
+type_uri_pattern: https://relmcrm.com/errors/{code}
+problems:
+- {status: 400, code: bad_request, title: Bad Request, meaning: Malformed JSON or an unrecognized query parameter/filter (see valid_options)., remediation: Fix the body or drop the unknown filter; the response lists the filters the list accepts.}
+- {status: 400, code: invalid_cursor, title: Invalid Cursor, meaning: The pagination cursor is invalid., remediation: Restart the list without a cursor.}
+- {status: 401, code: unauthorized, title: Unauthorized, meaning: Missing or invalid API key., remediation: 'Send Authorization: Bearer relm_live_... (or relm_test_...); mint a key at https://app.relmcrm.com/.'}
+- {status: 403, code: forbidden, title: Forbidden, meaning: This key is not permitted to perform that action., remediation: Use a key with the right mode/permissions.}
+- {status: 403, code: plan_limit, title: Plan Limit, meaning: A plan cap was reached (e.g. Free allows 2 automations / 1 sequence)., remediation: Upgrade the plan or remove an existing automation/sequence.}
+- {status: 404, code: not_found, title: Not Found, meaning: No such record in this workspace and mode., remediation: Check the id prefix and that the key's mode (test/live) matches the record; a wrong API path also returns the valid routes and a hint.}
+- {status: 409, code: conflict, title: Conflict, meaning: A uniqueness conflict (e.g. a duplicate contact email — the existing record is returned)., remediation: Use the returned existing record rather than retrying the create.}
+- {status: 409, code: idempotency_key_reused, title: Idempotency Key Reused, meaning: This Idempotency-Key was used with a different request body., remediation: Use a fresh key for a different request.}
+- {status: 409, code: idempotency_in_progress, title: Idempotency In Progress, meaning: A request with this Idempotency-Key is still processing., remediation: Retry shortly with the same key.}
+- {status: 412, code: version_conflict, title: Version Conflict, meaning: The record changed since you read it (optimistic concurrency via If-Match)., remediation: Re-fetch and reapply your change with the new version.}
+- {status: 413, code: payload_too_large, title: Payload Too Large, meaning: The request body exceeds the size limit., remediation: Split the payload; batch is capped at 100 operations.}
+- {status: 422, code: validation_failed, title: Validation Failed, meaning: The input was well-formed but invalid; see detail and field., remediation: Correct the named field.}
+- {status: 422, code: unknown_value, title: Unknown Value, meaning: A value is not in the live set., remediation: Read valid_options and either use a listed value (suggestion is the nearest) or create it (POST /v1/enums, relm_create_enum_value).}
+- {status: 422, code: unknown_field, title: Unknown Field, meaning: An unrecognized top-level field., remediation: Read valid_options + suggestion, or register it as a custom field (POST /v1/fields) and send it under custom_fields.}
+- {status: 422, code: invalid_reference, title: Invalid Reference, meaning: A foreign-key field points at something that does not exist., remediation: Create it first, or pass an existing id in this workspace/mode.}
+- {status: 422, code: identifier_required, title: Identifier Required, meaning: A contact needs at least one of email, phone or linkedin_url (or a name/company/custom field)., remediation: Supply at least one identifier.}
+- {status: 429, code: rate_limited, title: Rate Limited, meaning: Too many requests this minute., remediation: Back off and retry (see Retry-After).}
+- {status: 429, code: quota_exceeded, title: Quota Exceeded, meaning: The monthly request quota was reached., remediation: Check GET /v1/usage; upgrade to continue. Test mode never counts.}
+- {status: 429, code: spend_cap_reached, title: Spend Cap Reached, meaning: The monthly overage spend cap was reached., remediation: 'Raise or clear it: PATCH /v1/settings {"overage_cap_usd": null} (relm_set_spend_cap).'}
+- {status: 500, code: internal_error, title: Internal Error, meaning: An unexpected server error., remediation: Safe to retry; if it persists, contact support with the request_id.}
+mcp_and_a2a:
+  mcp_tools_call: >-
+    JSON-RPC error -32001 with data._meta["mcp/www_authenticate"] = Bearer realm="Relm", resource_metadata=...
+    on an unauthenticated call (observed 2026-09-19); tool-level failures surface the same code / valid_options /
+    suggestion fields per the docs.
+  a2a_message_send: >-
+    An unauthenticated message/send returns a terminal Task in state failed whose agent message carries a data
+    part with code unauthorized and auth bearer (observed 2026-09-19).

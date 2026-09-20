@@ -1,0 +1,237 @@
+generated: '2026-09-19'
+method: derived
+source: 'Derived from openapi/_original/relmcrm-com-openapi.json (OpenAPI 3.1.0, 25 components.schemas): the *_id
+  reference fields on Contact, Deal and Activity, the pipeline/stage keys on Deal, the Pipeline.stages[] array,
+  the query-parameter filters on the list operations, and the id_prefix examples in the schemas; cross-checked against
+  the object table on https://relmcrm.com/docs and the Objects section of https://relmcrm.com/llms.txt.'
+docs: https://relmcrm.com/docs
+live_schema: GET /v1/schema (getSchema) / relm_describe_schema returns the authoritative live object, field and
+  enum registry for a workspace, including custom fields and custom object types — this file is the published baseline,
+  the endpoint is the truth.
+notation: Every core record carries id (prefixed), object, version (for If-Match), mode (test|live), created_at,
+  updated_at, deleted and a custom_fields map. Relationships use has_one / has_many / belongs_to with the reference
+  field in `via`; direction is from the entity that owns the reference field.
+id_grammar:
+  pattern: <prefix>_<opaque>
+  note: Prefixes come from the schema examples (con_, cmp_, deal_, act_, pl_, wh_) and llms.txt; GET /v1/schema
+    returns each object id_prefix. Pipelines and stages are also addressed by human keys.
+entities:
+- name: Contact
+  id_prefix: con_
+  schema: Contact
+  input: ContactInput
+  path: /contacts
+  domain: core
+  description: 'A person. Email-optional (phone or linkedin_url may stand in); email is unique per workspace and
+    a duplicate returns the existing record. Fields: first_name, last_name, email, phone, linkedin_url, type (enum
+    group contact.type), company_id, custom_fields.'
+- name: Company
+  id_prefix: cmp_
+  schema: Company
+  input: CompanyInput
+  path: /companies
+  domain: core
+  description: 'An account. Fields: name, domain, custom_fields.'
+- name: Deal
+  id_prefix: deal_
+  schema: Deal
+  input: DealInput
+  path: /deals
+  domain: core
+  description: 'An opportunity in a pipeline + stage. Fields: title, value_cents, currency, pipeline (key), pipeline_name,
+    stage (key), stage_label, stage_type (open|won|lost), company_id, primary_contact_id, close_date, custom_fields.'
+- name: Activity
+  id_prefix: act_
+  schema: Activity
+  input: ActivityInput
+  path: /activities
+  domain: core
+  description: 'A note / call / email / meeting / task attached to a contact and/or deal; occurred_at backdates
+    imported history. Fields: type (enum group activity.type), body, contact_id, deal_id, occurred_at, custom_fields.'
+- name: Pipeline
+  id_prefix: pl_
+  schema: Pipeline
+  input: PipelineInput
+  path: /pipelines
+  key_addressable: true
+  domain: pipelines
+  description: A named pipeline with ordered stages and an is_default flag. Addressed by key or pl_ id.
+- name: Stage
+  id_prefix: null
+  schema: Pipeline.stages[]
+  path: /pipelines/{key}/stages/{stage}
+  key_addressable: true
+  domain: pipelines
+  description: 'Embedded in Pipeline: id, key, label, ordinal, type (open|won|lost). The same stage key (e.g. won)
+    can exist independently in several pipelines.'
+- name: Automation
+  id_prefix: null
+  input: AutomationInput
+  path: /automations
+  domain: automations
+  description: 'A single-step rule: when trigger_event [if conditions] then actions. trigger_event is one of the
+    five webhook events; action types send_email, send_message, create_activity, move_deal_stage, set_field.'
+- name: Sequence
+  id_prefix: null
+  input: SequenceInput
+  path: /sequences
+  domain: automations
+  description: 'A multi-step drip sequence: channel, connection, trigger {event, filter}, exit_when[], steps[] {wait_days,
+    subject, body}, enroll_existing, enabled.'
+- name: Enrollment
+  id_prefix: null
+  path: /sequences/{id}/enrollments
+  domain: automations
+  description: A contact's membership in a sequence (listEnrollments / enroll; idempotent per contact+sequence).
+- name: Template
+  id_prefix: null
+  path: /templates
+  domain: automations
+  description: A reusable email template (name, html with {{field}} placeholders) referenced by automations and
+    sequences.
+- name: Connection
+  id_prefix: null
+  path: /connections
+  domain: channels
+  description: A BYO messaging channel (channel, provider e.g. resend, api_key encrypted at rest, from, name) that
+    automations and sequences send through. The key is never returned.
+- name: Webhook
+  id_prefix: wh_
+  schema: Webhook
+  input: WebhookInput
+  path: /webhooks
+  domain: events
+  description: 'A subscription: url, events[] (subset of the 5 events or ["*"]), description, enabled, secret (whsec_...,
+    returned only on create), version.'
+- name: Delivery
+  id_prefix: null
+  path: /webhooks/{id}/deliveries
+  domain: events
+  description: A recorded delivery attempt for a webhook (listDeliveries).
+- name: CustomField
+  id_prefix: null
+  path: /fields
+  domain: registry
+  description: 'A field registered on contact/company/deal/activity: key, label, data_type (text|number|boolean|date|select|multiselect|currency|reference|email|url),
+    enum_group, required.'
+- name: EnumValue
+  id_prefix: null
+  path: /enums
+  domain: registry
+  description: A value in an enum group such as contact.type or activity.type (group, value, label); idempotent
+    create.
+- name: ObjectType
+  id_prefix: null
+  path: /types
+  domain: registry
+  description: A custom object type registered in the schema (createType; idempotent on key).
+- name: Usage
+  schema: Usage
+  path: /usage
+  domain: billing
+  description: 'Current billing period: period, used, overage, limit, plan.'
+- name: Settings
+  schema: Settings
+  path: /settings
+  domain: billing
+  description: 'Workspace settings: overage_cap_usd (number|null).'
+relationships:
+- from: Contact
+  to: Company
+  kind: belongs_to
+  via: company_id
+  filter: ?company_id= on listContacts
+- from: Company
+  to: Contact
+  kind: has_many
+  via: Contact.company_id
+- from: Deal
+  to: Company
+  kind: belongs_to
+  via: company_id
+  filter: ?company_id= on listDeals
+- from: Deal
+  to: Contact
+  kind: has_one
+  via: primary_contact_id
+  filter: ?primary_contact_id= on listDeals
+- from: Deal
+  to: Pipeline
+  kind: belongs_to
+  via: pipeline (key or pl_ id)
+  filter: ?pipeline= / ?pipeline_id= on listDeals
+- from: Deal
+  to: Stage
+  kind: belongs_to
+  via: stage (key within the deal's pipeline)
+  filter: ?stage= on listDeals
+- from: Pipeline
+  to: Stage
+  kind: has_many
+  via: stages[] (ordered by ordinal)
+- from: Activity
+  to: Contact
+  kind: belongs_to
+  via: contact_id
+  filter: ?contact_id= on listActivities
+  note: must attach to a contact_id and/or deal_id
+- from: Activity
+  to: Deal
+  kind: belongs_to
+  via: deal_id
+  filter: ?deal_id= on listActivities
+- from: Contact
+  to: Activity
+  kind: has_many
+  via: Activity.contact_id
+- from: Deal
+  to: Activity
+  kind: has_many
+  via: Activity.deal_id
+- from: Automation
+  to: Template
+  kind: has_one
+  via: send_email action (template reference)
+  note: documented in prose ("Templates referenced by automations and sequences"); not a typed field in the spec
+- from: Sequence
+  to: Template
+  kind: has_one
+  via: steps (documented in prose)
+- from: Sequence
+  to: Connection
+  kind: belongs_to
+  via: connection
+- from: Sequence
+  to: Enrollment
+  kind: has_many
+  via: /sequences/{id}/enrollments
+- from: Enrollment
+  to: Contact
+  kind: belongs_to
+  via: contact (enroll input)
+- from: Webhook
+  to: Delivery
+  kind: has_many
+  via: /webhooks/{id}/deliveries
+- from: CustomField
+  to: Contact|Company|Deal|Activity
+  kind: belongs_to
+  via: object
+- from: CustomField
+  to: EnumValue
+  kind: has_many
+  via: enum_group
+- from: Contact
+  to: EnumValue (contact.type)
+  kind: belongs_to
+  via: type
+- from: Activity
+  to: EnumValue (activity.type)
+  kind: belongs_to
+  via: type
+integrity:
+  cross_workspace_references: rejected ("you cannot link a deal to a company in someone else's workspace" — https://relmcrm.com/security)
+  dangling_references: 422 invalid_reference
+  uniqueness: Contact.email unique per workspace (409 conflict returns the existing record)
+  soft_delete: every core record has deleted; include_deleted=true lists them; restore reverses
+  concurrency: version + If-Match (412 version_conflict)

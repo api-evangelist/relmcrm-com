@@ -1,0 +1,151 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  https://relmcrm.com/docs (Conventions, Read the schema first, Batch writes, Errors, Rate limits) +
+  https://relmcrm.com/agents (The guarantees agents rely on) + https://relmcrm.com/errors +
+  openapi/_original/relmcrm-com-openapi.json (components.parameters IdempotencyKey / IfMatch / Cursor / Limit /
+  IncludeDeleted and their operation bindings)
+summary: >-
+  Cross-cutting request/response semantics for the Relm CRM REST API, MCP server and A2A endpoint, which share
+  one workspace, one key and one tool set. The published contract is agent-shaped: prefixed IDs, a stable list
+  envelope with keyset cursors, RFC 9457 errors that carry valid_options and a suggestion, Idempotency-Key on
+  the four core creates, If-Match optimistic concurrency on updates, and a schema endpoint an agent is told to
+  read before writing. Idempotency is real but SCOPED (4 of 44 writes carry the header), reversibility is a
+  soft-delete/restore pair with no stated window, and dry-run exists for exactly one operation.
+authentication:
+  styles: [bearer_api_key, oauth2_authorization_code_pkce]
+  header: 'Authorization: Bearer relm_live_... | relm_test_...'
+  oauth_scope: crm
+  see: authentication/relmcrm-com-authentication.yml
+identifiers:
+  style: prefixed opaque strings
+  prefixes:
+    contact: con_
+    company: cmp_
+    deal: deal_
+    activity: act_
+    pipeline: pl_
+    webhook: wh_
+    webhook_secret: whsec_
+    request_id: req_
+    task_id_a2a: task_
+    context_id_a2a: ctx_
+  note: Prefixes are published in llms.txt and the OpenAPI schema examples; GET /v1/schema returns each object's id_prefix live. Pipelines and stages are also addressable by human key (e.g. sales / won).
+envelope:
+  list: '{ "object": "list", "data": [...], "has_more": true, "next_cursor": "..." }'
+  record: every record carries id, object, version, mode, created_at, updated_at, deleted
+  delete: '{ "id": "...", "object": "...", "deleted": true }'
+pagination:
+  style: cursor (keyset over created_at, id)
+  params: {limit: 'default 25, max 100 (larger values clamp)', cursor: opaque next_cursor from the prior page}
+  response_fields: [has_more, next_cursor]
+  stability: stable under concurrent writes (docs)
+  include_deleted: '?include_deleted=true on the four core list operations returns soft-deleted rows'
+  errors: {invalid_cursor: 400 — restart the list without a cursor}
+filtering_and_search:
+  substring: '?q= on contacts (name, email, phone, LinkedIn), companies (name, domain), deals (title) — case-insensitive'
+  exact_filters: '?company_id=, ?stage=, ?pipeline= (alias ?pipeline_id=), ?contact_id=, ?deal_id=, ?type=, ?email=, ?domain=, ?primary_contact_id='
+  unknown_filter: rejected with 400 bad_request + valid_options — never silently unfiltered
+  cross_object: GET /v1/search (search) over contacts, companies and deals
+schema_first:
+  endpoint: GET /v1/schema (getSchema) / relm_describe_schema
+  returns: every object with fields, id_prefix and list_filters; all enum groups; list_controls; automation capability catalog; usage notes
+  rule: '"Call this before guessing a type, field or filter" — the OpenAPI operation description and the MCP server instructions both say it'
+  self_extension: unknown enum values / fields / types can be CREATED rather than worked around — POST /v1/enums (createEnumValue), POST /v1/fields (createField), POST /v1/types (createType); all three are idempotent on key
+custom_fields:
+  supported: true
+  register: POST /v1/fields with object, key, label, data_type (text|number|boolean|date|select|multiselect|currency|reference|email|url), enum_group, required
+  send_as: values under custom_fields on any object
+idempotency:
+  documented: true
+  header: Idempotency-Key
+  semantics: same key + same body replays the original result; same key + different body -> 409 idempotency_key_reused; still processing -> 409 idempotency_in_progress
+  retention: not stated
+  coverage: partial
+  scope:
+  - createContact
+  - createCompany
+  - createDeal
+  - createActivity
+  natively_idempotent:
+  - createEnumValue (spec summary "idempotent")
+  - createType ("Idempotent on key" — MCP tool description)
+  - enroll ("idempotent per contact+sequence" — MCP tool description)
+  - createContact on a duplicate email returns the existing record (409 conflict semantics documented as returning the record)
+  not_covered:
+  - batch (POST /v1/batch — 100 writes per call, no Idempotency-Key parameter declared; "partial success" per-op results)
+  - createPipeline, addStage, createAutomation, createSequence, createTemplate, createConnection, createWebhook and every DELETE/restore/enable operation
+  coverage_basis: >-
+    The components.parameters.IdempotencyKey $ref is bound to exactly 4 of the 44 mutating operations in the
+    72-operation OpenAPI (the four core-object creates), which is what the docs sentence "send an
+    Idempotency-Key header on a create" means in practice. The MCP relm_create tool exposes no idempotency key
+    input, so over MCP replay safety depends on the server rather than on the caller.
+  agent_risk: >-
+    A retried POST /v1/batch after a timeout can double-create up to 100 records; a retried createWebhook mints a
+    second subscription. Prefer the core creates with Idempotency-Key for imports, or dedupe by email (unique per
+    workspace) where the object allows it.
+concurrency:
+  mechanism: optimistic — every record carries version; send If-Match with the version you read
+  header: If-Match
+  conflict: 412 version_conflict — re-fetch and reapply
+  scope: [updateContact, updateCompany, updateDeal, updateActivity, updateTemplate, updateWebhook]
+  mcp_equivalent: relm_update if_match input
+reversibility:
+  api_is_read_only: false
+  grade: documented
+  grade_basis: >-
+    A reversal path exists and is documented (soft delete + restore on every core object, disable on every
+    automation surface) but NO window is stated for how long a soft-deleted live record remains restorable.
+    Docs: "Records support soft-delete and restore through the API"; privacy policy: "Records you delete are
+    soft-deleted first, so you can restore them, then removed" — the "then" has no stated duration. Not graded
+    verified because asserting a window the provider has not published would invent a commitment.
+  surfaces:
+  - write: deleteContact / deleteCompany / deleteDeal / deleteActivity (also relm_delete)
+    reversal: restoreContact / restoreCompany / restoreDeal / restoreActivity (relm_restore)
+    window: not stated for live records; test-mode records are hard-deleted 7 days after creation regardless
+    source: https://relmcrm.com/docs, https://relmcrm.com/security, https://relmcrm.com/privacy
+    note: '"Never hard-destroys data" (relm_delete tool description); include_deleted=true lists the soft-deleted rows.'
+  - write: createAutomation / createSequence / createWebhook
+    reversal: setAutomationEnabled(false) / setSequenceEnabled(false) / updateWebhook enabled=false (relm_manage_* action=disable) — stops firing/sending/delivering without deleting; deletes are hard (deleteAutomation, deleteSequence, deleteWebhook, no restore operation)
+    window: not stated
+    source: mcp/relmcrm-com-mcp-tools-list.json tool descriptions ("use this to turn off")
+  - write: enroll (manual sequence enrollment)
+    reversal: none declared — exit is governed by the sequence's exit_when conditions or by disabling the sequence
+    window: n/a
+  - write: send_email / send_message automation actions, sequence steps
+    reversal: irreversible once sent; disable the automation/sequence to stop further sends
+    window: n/a
+  - write: createConnection (stores a third-party key)
+    reversal: deleteConnection (hard)
+  - write: batch
+    reversal: per-op — creates can be soft-deleted individually; no batch-level undo
+  dry_run:
+    coverage: partial
+    operations: [previewSequence]
+    note: '"Dry-run: who would enroll now + the send schedule." No dry-run flag exists on core writes; test mode (relm_test_ key) is the rehearsal surface for everything else.'
+errors:
+  format: rfc9457
+  media_type: application/problem+json
+  shape: type (https://relmcrm.com/errors/<code>, resolves to a reference page), title, status, detail, code, field, valid_options[], suggestion, request_id
+  self_correction: on unknown_value / unknown_field read valid_options + suggestion, then retry or create the value
+  see: errors/relmcrm-com-problem-types.yml
+tracing:
+  request_id: req_... in every problem body (and the support page asks for it); no documented response header name
+rate_limiting:
+  headers: [X-RateLimit-*, X-Quota-*, Retry-After]
+  exhaustion: 429 rate_limited (per minute) / quota_exceeded (monthly) / spend_cap_reached; 403 plan_limit
+  see: rate-limits/relmcrm-com-rate-limits.yml
+versioning:
+  style: path (/v1); OpenAPI info.version 0.17.1 tracks product releases on the changelog
+  see: lifecycle/relmcrm-com-lifecycle.yml
+batch:
+  endpoint: POST /v1/batch (batch) / relm_batch
+  max_operations: 100
+  objects: [contact, company, deal, activity]
+  methods: [create, update, delete]
+  semantics: per-op results with partial success; event-silent (no webhooks fire); metered per operation
+webhooks:
+  see: asyncapi/relmcrm-com-webhooks.yml
+modes:
+  test_vs_live: decided by the key prefix; data never crosses; OAuth is live-only
+  see: sandbox/relmcrm-com-sandbox.yml

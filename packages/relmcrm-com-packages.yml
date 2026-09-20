@@ -1,0 +1,51 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  https://registry.npmjs.org/relmcrm (package metadata) + https://relmcrm.com/docs ("TypeScript SDK" section,
+  which names npmjs.com/package/relmcrm as the official SDK) + registry sweeps of npm search, PyPI
+  (relm, relmcrm, relm-crm), and GitHub (relmcrm, relm-crm, relmhq orgs) on 2026-09-19.
+summary:
+  first_party_sdk_count: 1
+  third_party_package_count: 0
+  note: >-
+    One official client library: the `relmcrm` npm package, a zero-dependency TypeScript wrapper the docs
+    page introduces as "the official SDK". Single release 0.1.0 published 2026-07-10, nine days before the API
+    reached v0.9.0 and eighteen before the current 0.17.1 (changelog); the SDK covers the four core objects,
+    schema and batch and exposes a low-level request() escape hatch for the rest. No Python, Go, Ruby, Java,
+    .NET or Rust package exists in any registry — `relm` on npm (hyperfinite/relm, composable components) and
+    `relm` on PyPI (a Python monorepo manager) are unrelated name collisions. No first-party CLI.
+github_organization:
+  found: false
+  checked: '2026-09-19'
+  note: >-
+    No GitHub organization for Relm was located (github.com/relmcrm, relm-crm and relmhq all 404). The npm
+    package's declared repository, https://github.com/98000m/relmcrm-sdk, returns 404 although the personal
+    account github.com/98000m exists — the SDK source is not public and the repository link in the package
+    manifest is dead. No GitHubOrganization pointer is emitted.
+packages:
+- language: typescript
+  registry: npm
+  name: relmcrm
+  url: https://www.npmjs.com/package/relmcrm
+  install: npm i relmcrm
+  official: true
+  official_basis: Named as "the official SDK" on https://relmcrm.com/docs and in the package README; homepage field https://relmcrm.com; author Oleg Kovalev, the founder named on https://relmcrm.com/security.
+  version: 0.1.0
+  published: '2026-07-10'
+  versions_published: 1
+  license: MIT
+  repository: https://github.com/98000m/relmcrm-sdk
+  repository_status: 404 (checked 2026-09-19)
+  runtimes: [Node 18+, Bun, Deno, browsers]
+  dependencies: 0
+  surface: >-
+    relm.contacts / companies / deals / activities each expose create, list, get, update, delete and an
+    async-iterator all(); plus relm.schema(), relm.batch([...]) and relm.request(method, path). Failed calls throw
+    RelmError with status, validOptions and hint (the RFC 9457 valid_options/suggestion fields surfaced as
+    properties).
+  currency_note: >-
+    The API is at 0.17.1 (OpenAPI info.version, agent card, MCP serverInfo) while the SDK has not moved from
+    0.1.0 since 2026-07-10. Pipelines, automations, sequences, templates, connections and webhooks — 39 of the
+    72 REST operations — are reachable from the SDK only through request(). Read as: a thin, current-enough
+    wrapper over a fast-moving API, not an abandoned one (the API itself is 18 days older than the SDK).
+third_party_packages: []

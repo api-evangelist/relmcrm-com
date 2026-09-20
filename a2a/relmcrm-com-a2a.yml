@@ -1,0 +1,144 @@
+generated: '2026-09-19'
+method: probed
+source: https://relmcrm.com/.well-known/agent-card.json
+card:
+  file: a2a/relmcrm-com-agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: relmcrm.com
+  note: >-
+    Served from the apex marketing host (relmcrm.com), while the JSON-RPC endpoint the card names lives on the
+    API host (api.relmcrm.com/a2a). www.relmcrm.com 301s the path to the apex. The legacy /.well-known/agent.json
+    is ALSO served and is byte-identical (3,236 bytes, cmp clean), so both discovery paths resolve to one
+    document. Not an SPA catch-all: unrelated /.well-known/* paths on relmcrm.com (openid-configuration,
+    oauth-authorization-server, api-catalog) return real HTML 404s, and api.relmcrm.com answers every unknown
+    path with an application/problem+json 404. Ownership is not in question: provider.organization is "Relm"
+    with provider.url https://relmcrm.com/, documentationUrl is https://relmcrm.com/docs, the OpenAPI on the
+    same host titles itself "Relm CRM API" with servers[] https://api.relmcrm.com/v1, and the card's bearer
+    description names the relm_live_/relm_test_ key prefixes the docs and OpenAPI also use.
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://relmcrm.com/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json; charset=utf-8
+  body_bytes: 3236
+  body_parses_as: >-
+    JSON object with AgentCard shape (protocolVersion, name, description, url, preferredTransport,
+    additionalInterfaces, provider, documentationUrl, version, defaultInputModes, defaultOutputModes,
+    securitySchemes, security, capabilities, skills)
+  corroborating_probes:
+  - url: https://relmcrm.com/.well-known/agent.json
+    http_status: 200
+    note: Byte-identical to agent-card.json (pre-0.3 discovery path also served).
+  - url: https://www.relmcrm.com/.well-known/agent-card.json
+    http_status: 301
+    note: Redirects to https://relmcrm.com/.well-known/agent-card.json.
+  - url: https://api.relmcrm.com/.well-known/agent-card.json
+    http_status: 404
+    note: application/problem+json not_found — the card is published on the apex host only.
+  - url: https://api.relmcrm.com/a2a
+    method: POST
+    body: '{"jsonrpc":"2.0","id":1,"method":"message/send","params":{"message":{"role":"user","parts":[{"kind":"text","text":"ping"}],"messageId":"1"}}}'
+    http_status: 200
+    response: >-
+      {"jsonrpc":"2.0","id":1,"result":{"kind":"task","id":"task_...","contextId":"ctx_...","status":{"state":"failed",
+      "message":{"kind":"message","role":"agent","parts":[{"kind":"text","text":"Authentication required. Send Authorization:
+      Bearer relm_live_... (or relm_test_...); mint a free key at https://app.relmcrm.com/."},{"kind":"data","data":{"code":"unauthorized","auth":"bearer"}}]}}}}
+    note: >-
+      A real A2A JSON-RPC responder: an anonymous message/send returns a well-formed terminal Task in state
+      failed carrying an agent message that names the credential to send. Nothing was written.
+  - url: https://a2aregistry.org/
+    http_status: 200
+    note: >-
+      The card is listed on a2aregistry.org (author "Relm", pointing at relmcrm.com/.well-known/agent-card.json),
+      which is how this provider entered the harvest backlog (x-source harvest:a2a-registry).
+agent_card:
+  name: Relm CRM
+  description: >-
+    An API-first CRM built for LLMs and AI agents. Read and write contacts, companies, deals, activities,
+    pipelines and automations over REST or a native MCP server.
+  url: https://api.relmcrm.com/a2a
+  version: 0.17.1
+  protocol_version: '0.3.0'
+  preferred_transport: JSONRPC
+  additional_interfaces:
+  - {transport: JSONRPC, url: https://api.relmcrm.com/a2a}
+  provider:
+    organization: Relm
+    url: https://relmcrm.com/
+  documentation_url: https://relmcrm.com/docs
+  capabilities:
+    streaming: false
+    push_notifications: false
+  default_input_modes: [application/json, text/plain]
+  default_output_modes: [application/json]
+  security_schemes:
+    oauth2: OAuth 2.1 authorization code (authorizationUrl https://api.relmcrm.com/oauth/authorize, tokenUrl https://api.relmcrm.com/oauth/token), scope crm, PKCE + dynamic client registration per the description.
+    bearer: http bearer — workspace API key relm_live_... or relm_test_... minted at https://app.relmcrm.com/
+  security:
+  - oauth2: [crm]
+  - bearer: []
+  skill_count: 7
+  skills:
+  - {id: manage-contacts, name: Manage contacts, tags: [crm, contacts]}
+  - {id: manage-companies, name: Manage companies, tags: [crm, companies]}
+  - {id: manage-deals, name: Manage deals, tags: [crm, deals, pipeline]}
+  - {id: log-activities, name: Log activities, tags: [crm, activities]}
+  - {id: automate, name: Automations, tags: [crm, automation, sequences]}
+  - {id: webhooks, name: Webhooks, tags: [crm, webhooks, events]}
+  - {id: describe-schema, name: Describe schema, tags: [crm, schema, discovery]}
+  skill_invocation: >-
+    Per the docs (https://relmcrm.com/docs, "Connect via A2A"), a message/send whose data part is
+    {"tool":"relm_...","arguments":{...}} runs one of the 41 MCP tools synchronously and returns a terminal Task.
+    The seven card skills are groupings of those tools, not one-to-one; see mcp/relmcrm-com-tool-crosswalk.yml.
+conformance:
+  spec: A2A 1.0.0
+  grade: conformant
+  protocol_version: '0.3.0'
+  preferred_transport: JSONRPC
+  hard_checks:
+    capabilities_is_object: true
+    protocol_version_present: true
+    skills_is_array: true
+  optional_fields:
+    default_input_modes: true
+    default_output_modes: true
+    preferred_transport: true
+  grade_basis: >-
+    Graded against the A2A 1.0.0 hard checks. capabilities is an OBJECT (streaming false, pushNotifications
+    false). protocolVersion is present at the top level, declared "0.3.0". skills is an ARRAY of seven skills,
+    each with id, name, description and tags. All three optional discriminators are present: preferredTransport
+    JSONRPC, defaultInputModes [application/json, text/plain], defaultOutputModes [application/json]. The card
+    also declares securitySchemes (oauth2 + bearer) and a security[] requirement, a provider block, a
+    documentationUrl and an additionalInterfaces[] entry, which many 0.3.0 cards omit.
+  deviations:
+  - field: protocolVersion / url / preferredTransport / additionalInterfaces
+    observed: 0.3.0 top-level triple plus additionalInterfaces[]; no 1.0.0 supportedInterfaces[] block
+    note: >-
+      Valid for A2A 0.3.0, which the card declares. A reader written against 1.0.0 looks for
+      supportedInterfaces[].protocolBinding and will not find it. Recorded because both shapes coexist in the
+      catalog, not as a fault.
+  - field: skills[].examples / inputModes / outputModes
+    observed: absent on every skill
+    note: >-
+      Optional per-skill fields. The card relies on the default modes and gives no example invocation, so an
+      agent must read the docs to learn the {tool, arguments} data-part convention.
+  - field: capabilities.stateTransitionHistory / extensions
+    observed: absent
+    note: Optional; the card declares only the two booleans.
+  - field: iconUrl / signatures
+    observed: absent
+    note: No icon and no JWS signature block; the card's authenticity rests on TLS to relmcrm.com.
+  - field: securitySchemes.oauth2
+    observed: declares authorizationUrl/tokenUrl/scopes only
+    note: >-
+      The card does not carry the registration or revocation endpoints; those are discoverable from
+      https://api.relmcrm.com/.well-known/oauth-authorization-server (well-known/relmcrm-com-oauth-authorization-server.json).
+surface_relationship:
+  note: >-
+    One tool set, three doors. MCP at https://api.relmcrm.com/mcp exposes 41 tools (anonymous tools/list). A2A
+    at https://api.relmcrm.com/a2a runs the same tools by name inside message/send. REST at
+    https://api.relmcrm.com/v1 exposes 72 operations that the tools fan out to. The agent card, the MCP
+    descriptor (/.well-known/mcp.json), the ai-plugin manifest and llms.txt all live on the apex host and all
+    point at the same two endpoints; the OAuth discovery documents live on the API host.

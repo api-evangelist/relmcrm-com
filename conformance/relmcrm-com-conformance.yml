@@ -1,0 +1,88 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  Live probes 2026-09-19 (https://api.relmcrm.com/.well-known/oauth-authorization-server,
+  https://api.relmcrm.com/.well-known/oauth-protected-resource, POST https://api.relmcrm.com/mcp initialize +
+  tools/list + tools/call, POST https://api.relmcrm.com/a2a, GET https://api.relmcrm.com/v1/schema,
+  https://relmcrm.com/.well-known/security.txt, https://relmcrm.com/.well-known/agent-card.json,
+  https://relmcrm.com/llms.txt, https://relmcrm.com/openapi.json) + https://relmcrm.com/docs +
+  https://relmcrm.com/security
+standards:
+- id: openapi-3.1
+  conforms: true
+  evidence: https://relmcrm.com/openapi.json serves OpenAPI 3.1.0 (200, 89,307 bytes, 41 paths / 72 operations / 25 schemas), captured verbatim to openapi/_original/relmcrm-com-openapi.json; info.title "Relm CRM API", servers[] https://api.relmcrm.com/v1.
+- id: oauth2
+  conforms: true
+  evidence: RFC 8414 metadata at https://api.relmcrm.com/.well-known/oauth-authorization-server (200) — authorization_code + refresh_token grants, scope crm; the OpenAPI declares the matching oauth2 authorizationCode flow.
+- id: oauth2-pkce
+  conforms: true
+  evidence: code_challenge_methods_supported ["S256"]; docs state PKCE S256 is required.
+- id: oauth2-dynamic-client-registration
+  conforms: true
+  evidence: registration_endpoint https://api.relmcrm.com/oauth/register in the RFC 8414 document; docs name RFC 7591; GET on the endpoint 404s (POST-only, not exercised — no client was registered).
+- id: oauth2-token-revocation
+  conforms: true
+  evidence: revocation_endpoint https://api.relmcrm.com/oauth/revoke in the RFC 8414 document.
+- id: rfc8414-authorization-server-metadata
+  conforms: true
+  evidence: well-known/relmcrm-com-oauth-authorization-server.json (issuer https://api.relmcrm.com; also served identically on app.relmcrm.com).
+- id: rfc9728-protected-resource-metadata
+  conforms: true
+  evidence: well-known/relmcrm-com-oauth-protected-resource.json — resource https://api.relmcrm.com/mcp, authorization_servers [https://api.relmcrm.com], bearer_methods_supported [header]; and the live 401 on tools/call carries WWW-Authenticate resource_metadata= pointing at it (RFC 9728 §5.1).
+- id: oidc-discovery
+  conforms: false
+  evidence: /.well-known/openid-configuration returns 404 on relmcrm.com, api.relmcrm.com and app.relmcrm.com; the authorization server is OAuth 2.1 only (no OIDC id_token).
+- id: mcp
+  conforms: true
+  evidence: Hosted Streamable-HTTP MCP server at https://api.relmcrm.com/mcp negotiated protocolVersion 2025-06-18 on an anonymous initialize; tools/list returned 41 tools with inputSchema, annotations and securitySchemes; /.well-known/mcp.json descriptor served on the apex.
+- id: mcp-authorization
+  conforms: true
+  evidence: Unauthenticated tools/call returns JSON-RPC -32001 with WWW-Authenticate Bearer realm="Relm", resource_metadata="https://api.relmcrm.com/.well-known/oauth-protected-resource" — the MCP authorization spec's discovery hop.
+- id: a2a
+  conforms: true
+  evidence: Agent card at https://relmcrm.com/.well-known/agent-card.json graded conformant against A2A 1.0.0 (a2a/relmcrm-com-a2a.yml); JSON-RPC endpoint https://api.relmcrm.com/a2a answers message/send with a well-formed Task.
+- id: rfc9457-problem-details
+  conforms: true
+  evidence: Observed live — GET /v1/schema without a key returned 401 application/problem+json {type, title, status, detail, code, request_id}; components.responses.Problem is the default response on all 72 operations; https://relmcrm.com/errors documents 20 type URIs that resolve.
+- id: rfc9116-security-txt
+  conforms: true
+  evidence: https://relmcrm.com/.well-known/security.txt (200, text/plain) with Contact, Expires (2026-12-31), Preferred-Languages, Canonical; no Policy field.
+- id: llms-txt
+  conforms: true
+  evidence: https://relmcrm.com/llms.txt (200, 8,456 bytes) in llmstxt.org format; saved to llms/relmcrm-com-llms.txt.
+- id: idempotency-key
+  conforms: true
+  scope: partial
+  evidence: Idempotency-Key header parameter declared on createContact, createCompany, createDeal, createActivity (4 of 44 writes) with replay + 409 idempotency_key_reused / idempotency_in_progress semantics documented; not on batch or the non-core creates. See conventions/relmcrm-com-conventions.yml.
+- id: rfc7232-conditional-requests
+  conforms: true
+  evidence: If-Match header on the six update operations with 412 version_conflict on mismatch (optimistic concurrency on every record's version field).
+- id: cursor-pagination
+  conforms: true
+  evidence: Keyset cursors (limit/cursor params, has_more/next_cursor envelope) on every list operation; documented as stable under concurrent writes.
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: No Deprecation/Sunset headers documented; no operation deprecated; deprecation notice is a prose clause in the terms.
+- id: rfc9727-api-catalog
+  conforms: false
+  evidence: /.well-known/api-catalog 404 on every host.
+- id: webhook-signature-hmac
+  conforms: true
+  evidence: 'Relm-Signature: t=<unix>,v1=<hmac> — HMAC-SHA256 over "<t>.<raw body>" with a per-subscription whsec_ secret (docs, with verification code); Standard Webhooks compatibility is not claimed.'
+- id: asyncapi
+  conforms: false
+  evidence: No AsyncAPI document (relmcrm.com/asyncapi.json and .yaml 404); the webhook surface is documented in prose only — see asyncapi/relmcrm-com-webhooks.yml.
+- id: graphql
+  conforms: false
+  evidence: No GraphQL endpoint is published or referenced.
+- id: soc2 / iso27001
+  conforms: false
+  evidence: '"we are not going to claim certifications we do not yet hold (no SOC 2 badge theatre)" — https://relmcrm.com/security. No Compliance pointer is emitted.'
+domain_standard_conformance:
+  applicable: false
+  market: CRM / sales pipeline
+  note: >-
+    No interoperability standard governs the CRM market (there is no SCIM-, OData- or FHIR-equivalent for
+    contacts/deals that a buyer already speaks), so the reward-only domain_standard_conformance check has no
+    candidate here and nothing is asserted. The provider's own "standards" posture is agent-protocol conformance
+    (OAuth 2.1 / RFC 8414 / RFC 9728 / MCP / A2A / RFC 9457), recorded above.

@@ -1,0 +1,91 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+source: https://relmcrm.com/privacy (Last updated 25 July 2026) + https://relmcrm.com/terms + https://relmcrm.com/security + https://relmcrm.com/support
+probed_paths:
+- {url: https://relmcrm.com/accessibility, status: 404}
+- {url: https://relmcrm.com/legal/subprocessors, status: 404}
+- {url: https://relmcrm.com/subprocessors, status: 404}
+- {url: https://relmcrm.com/legal/dpa, status: 404}
+- {url: https://relmcrm.com/dpa, status: 404}
+- {url: https://relmcrm.com/privacy, status: 200}
+- {url: https://relmcrm.com/terms, status: 200}
+- {url: https://relmcrm.com/security, status: 200}
+- {url: https://relmcrm.com/support, status: 200}
+note: >-
+  Harvest only. Every signal below is a page that carries the substance (a dated subprocessor table, a named
+  hosting region, a request channel with a response period, an exit clause), not a page that mentions the
+  word. Nothing is inferred about which regime applies. Absent signals (sbom, accessibility_conformance,
+  training_data_summary, ai_transparency, global_privacy_control, incident_notification, age_assurance,
+  notice_and_action, transparency_report, support_lifetime) were looked for on the conventional paths above
+  and in the docs and were not found; that absence is the measurement. The privacy policy's "not directed at
+  anyone under 16" is an audience statement, not an age-assurance mechanism, and "We never train on your data"
+  is a customer-data commitment by a company that ships no model, not a training-data summary — neither is
+  recorded as a signal.
+signals:
+  subprocessors:
+    url: https://relmcrm.com/privacy
+    section: Who else touches it
+    dated: '2026-07-25'
+    entries:
+    - {vendor: Hetzner, purpose: Server hosting, primary database, location: Finland (EU)}
+    - {vendor: Cloudflare, purpose: 'DNS, CDN, encrypted backup storage, email routing', location: Global}
+    - {vendor: SMTP2GO, purpose: 'Sending account emails, such as your confirmation code', location: European Union}
+    - {vendor: Stripe, purpose: Subscription billing and payments, location: Global}
+    - {vendor: PostHog, purpose: Product analytics, location: United States}
+    - {vendor: Google Analytics, purpose: Marketing-site analytics only, location: United States}
+    evidence:
+    - source: https://relmcrm.com/privacy
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: '"These are our subprocessors - the only third parties that can hold or process your data" followed by a Provider / Role / Where table of six entries.'
+    note: A dated table inside the privacy policy (policy date 25 July 2026); no standalone /legal/subprocessors page and no change-notification mechanism for the list is stated. Customer-connected providers (e.g. a Resend key) are called out as the customer's own processors.
+  data_residency:
+    url: https://relmcrm.com/privacy
+    section: Where your data lives
+    regions:
+    - {region: Helsinki, Finland (EU), scope: primary CRM database, provider: Hetzner}
+    - {region: Cloudflare R2 (location not stated), scope: encrypted nightly backups, retention: 14 days locally and 30 days offsite}
+    customer_selectable: false
+    evidence:
+    - source: https://relmcrm.com/privacy
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: '"Your CRM database runs on our own servers in Helsinki, Finland (EU), hosted by Hetzner. Nightly backups are encrypted with GPG AES-256 before they leave the machine, and are stored in Cloudflare R2. Backups are kept 14 days locally and 30 days offsite."'
+    note: A single fixed EU region with a named host and backup schedule; llms.txt also states "EU hosting". No region choice is offered.
+  data_subject_request:
+    url: https://relmcrm.com/privacy
+    section: Your rights
+    channel: privacy@relmcrm.com
+    stated_sla: Email privacy@relmcrm.com and we will respond within 30 days.
+    rights_named: [access, correct, export, delete, object, restrict, complain to a data protection authority]
+    fee: We will never charge you for a reasonable request.
+    evidence:
+    - source: https://relmcrm.com/privacy
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: '"Depending on where you live, you may have the right to access, correct, export, or delete your personal data, to object to or restrict how we process it, and to complain to your data protection authority. Email privacy@relmcrm.com and we will respond within 30 days."'
+    - source: https://relmcrm.com/support
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: '"Privacy requests get a response within 30 days, as our privacy policy commits to."'
+    note: A documented channel and response period; no intake form or API endpoint (/privacy/requests not offered). Account deletion is by email to privacy@relmcrm.com and reaches backups as they roll off (up to 30 days).
+  exit_assistance:
+    url: https://relmcrm.com/terms
+    section: 6. Ending this agreement / 7. Availability
+    stated_period: 30 days' notice; refund of the unused prepaid part; that time to export your data through the same API you put it in with
+    evidence:
+    - source: https://relmcrm.com/terms
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: '"We may end this agreement with 30 days'' notice. If we do that for any reason other than your breach of these terms, we will refund the unused part of what you have prepaid, and you will have that time to export your data through the same API you put it in with."'
+    - source: https://relmcrm.com/privacy
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: '"Your CRM content is exportable at any time through the same API you put it in with. There is no lock-in and no export fee."'
+    note: Export is the read API itself (cursor lists with include_deleted); no bulk export endpoint or file format is offered.
+operator:
+  legal_entity: ASP FZE LLC
+  address: Sharjah Publishing City Free Zone, Sharjah, United Arab Emirates
+  source: https://relmcrm.com/privacy (Who we are) + https://relmcrm.com/terms
+  note: Operator is UAE-registered while the data is hosted in the EU (Finland); the support page describes "a small team in Europe".

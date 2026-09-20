@@ -1,0 +1,35 @@
+{
+  "name": "relm",
+  "title": "Relm CRM",
+  "description": "API-first CRM built for LLMs. Contacts, companies, deals and activities over a native MCP server. Start with relm_describe_schema.",
+  "version": "0.17.1",
+  "vendor": "Relm",
+  "homepage": "https://relmcrm.com/",
+  "documentation": "https://relmcrm.com/docs",
+  "server": {
+    "transport": "streamable-http",
+    "url": "https://api.relmcrm.com/mcp",
+    "authentication": {
+      "type": "oauth2",
+      "authorization_url": "https://api.relmcrm.com/oauth/authorize",
+      "token_url": "https://api.relmcrm.com/oauth/token",
+      "registration_url": "https://api.relmcrm.com/oauth/register",
+      "metadata_url": "https://api.relmcrm.com/.well-known/oauth-authorization-server",
+      "protected_resource_metadata": "https://api.relmcrm.com/.well-known/oauth-protected-resource",
+      "scopes": [
+        "crm"
+      ],
+      "pkce": "S256 required",
+      "alternative": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Workspace API key (relm_live_... or free relm_test_...) minted at https://app.relmcrm.com/. Use OAuth for end-user clients; keys suit servers and CI."
+      }
+    }
+  },
+  "capabilities": {
+    "tools": true,
+    "resources": false,
+    "prompts": false
+  }
+}

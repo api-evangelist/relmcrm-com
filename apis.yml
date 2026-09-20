@@ -1,23 +1,307 @@
 aid: relmcrm-com
 name: Relm
-description: 'Relm is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Relm is an API-first CRM built for LLMs and AI agents, operated by ASP FZE LLC (Sharjah, UAE) with data hosted
+  in Helsinki, Finland. Contacts, companies, deals, activities, pipelines, automations, drip sequences,
+  templates and webhooks are exposed three ways over one workspace key: a 72-operation OpenAPI 3.1 REST API at
+  https://api.relmcrm.com/v1, a hosted Streamable-HTTP MCP server at https://api.relmcrm.com/mcp whose 41
+  typed tools answer an anonymous tools/list, and an A2A 0.3.0 agent card at
+  https://relmcrm.com/.well-known/agent-card.json backed by a JSON-RPC endpoint at https://api.relmcrm.com/a2a.
+  Auth is a workspace bearer key (relm_live_ / free isolated relm_test_) or OAuth 2.1 with PKCE and RFC 7591
+  dynamic client registration; errors are RFC 9457 problem+json carrying valid_options and a suggestion so an
+  agent self-corrects; writes carry Idempotency-Key on the core creates and If-Match optimistic concurrency on
+  updates. Priced per API request (Free 1,000/mo, Pro $29 for 100,000, Scale $249 for 2,000,000) rather than
+  per seat. The web dashboard is described by the provider as "the thin part".
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  - mcp
+  generated: '2026-09-19'
+  method: derived
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: true
+  try_now: true
+  public: true
+  label: Self-serve signup · free tier · no-account test widget
+  confidence: high
+  source:
+  - pricing
+  - sandbox
+  - authentication
+  generated: '2026-09-19'
+  method: derived
+image: https://relmcrm.com/og.png
 url: https://raw.githubusercontent.com/api-evangelist/relmcrm-com/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: >-
+  Full local enrichment pass 2026-09-19 (was: stub / harvest). Live OpenAPI 3.1 (72 operations) at
+  relmcrm.com/openapi.json, anonymous 41-tool MCP tools/list at api.relmcrm.com/mcp, conformant A2A 0.3.0 agent
+  card, RFC 8414 + RFC 9728 OAuth discovery, security.txt, llms.txt, mcp.json, ai-plugin.json and an official
+  npm SDK found.
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
 tags:
-- Company
-apis: []
+- CRM
+- Sales
+- Contacts
+- Deals
+- Sales Pipeline
+- Automation
+- Webhooks
+- MCP
+- A2A
+- AI Agents
+- agent-native
+- United Arab Emirates
+tags_raw:
+- CRM
+- Sales
+- Contacts
+- Deals
+- Sales pipeline
+- Automation
+- Webhooks
+- MCP
+- A2A
+- AI agents
+- Agent-native
+- United Arab Emirates
+apis:
+- aid: relmcrm-com:relm-crm-rest-api
+  name: Relm CRM REST API
+  description: >-
+    REST surface for the whole Relm workspace — contacts, companies, deals, activities (full CRUD with soft
+    delete + restore), pipelines and stages, custom fields / enum values / object types, automations, drip
+    sequences, templates, BYO messaging connections, webhooks with signed deliveries, cross-object search, a
+    100-operation batch endpoint, usage and spend-cap settings, and a live self-describing GET /schema. 72
+    operations across 41 paths, OpenAPI 3.1.0, servers[] https://api.relmcrm.com/v1. Bearer key or OAuth 2.1;
+    RFC 9457 errors; keyset cursor pagination; Idempotency-Key on the four core creates; If-Match on updates.
+  image: https://relmcrm.com/og.png
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - CRM
+  - Sales
+  - Contacts
+  - Deals
+  - Sales Pipeline
+  - Automation
+  - Webhooks
+  tags_raw:
+  - CRM
+  - Sales
+  - Contacts
+  - Deals
+  - Sales pipeline
+  - Automation
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-openapi.yml
+  - type: OpenAPI
+    name: Provider-hosted OpenAPI 3.1 (source of openapi/_original/relmcrm-com-openapi.json)
+    url: https://relmcrm.com/openapi.json
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Overlay
+    url: overlays/relmcrm-com-openapi-overlay.yaml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
+- aid: relmcrm-com:relm-mcp-server
+  name: Relm MCP Server
+  description: >-
+    First-party hosted Model Context Protocol server (Streamable HTTP) at https://api.relmcrm.com/mcp. 41 typed
+    tools covering every REST capability — schema discovery, search, list/get/create/update/delete/restore on
+    the four core objects, pipelines and stages, registry (types, fields, enum values), batch, automations,
+    sequences with a dry-run preview, templates, connections, webhooks, usage and spend cap — each carrying MCP
+    annotations (readOnlyHint / destructiveHint) and an oauth2 securitySchemes declaration. initialize and
+    tools/list are anonymous; tools/call requires OAuth 2.1 (PKCE, dynamic client registration, scope crm) or a
+    workspace bearer key, and an unauthenticated call returns the RFC 9728 WWW-Authenticate challenge.
+  image: https://relmcrm.com/og.png
+  humanURL: https://relmcrm.com/docs#mcp
+  baseURL: https://api.relmcrm.com/mcp
+  tags:
+  - MCP
+  - agent-native
+  - CRM
+  - AI Agents
+  tags_raw:
+  - MCP
+  - Agent-native
+  - CRM
+  - AI agents
+  properties:
+  - type: MCPServer
+    url: mcp/relmcrm-com-mcp.yml
+  - type: MCPServer
+    name: Live MCP endpoint (Streamable HTTP)
+    url: https://api.relmcrm.com/mcp
+  - type: ToolCrosswalk
+    url: mcp/relmcrm-com-tool-crosswalk.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs#mcp
+  - type: Documentation
+    name: MCP server descriptor (/.well-known/mcp.json)
+    url: https://relmcrm.com/.well-known/mcp.json
+- aid: relmcrm-com:relm-a2a-agent
+  name: Relm A2A Agent
+  description: >-
+    Agent2Agent (A2A 0.3.0) JSON-RPC endpoint at https://api.relmcrm.com/a2a. A message/send whose data part is
+    {tool, arguments} runs one of the same 41 MCP tools synchronously and returns a terminal Task. Discovered by
+    the agent card at https://relmcrm.com/.well-known/agent-card.json (also served at the legacy
+    /.well-known/agent.json), which declares seven skills — manage contacts, companies, deals; log activities;
+    automations; webhooks; describe schema — with oauth2 and bearer security schemes. Graded conformant against
+    A2A 1.0.0. Listed on a2aregistry.org.
+  image: https://relmcrm.com/og.png
+  humanURL: https://relmcrm.com/agents
+  baseURL: https://api.relmcrm.com/a2a
+  tags:
+  - A2A
+  - agent-native
+  - CRM
+  - AI Agents
+  tags_raw:
+  - A2A
+  - Agent-native
+  - CRM
+  - AI agents
+  properties:
+  - type: AgentCard
+    url: a2a/relmcrm-com-a2a.yml
+  - type: AgentCard
+    name: A2A Agent Card (provider-hosted)
+    url: https://relmcrm.com/.well-known/agent-card.json
+  - type: Documentation
+    url: https://relmcrm.com/agents
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: VulnerabilityDisclosure
+  url: security/relmcrm-com-vulnerability-disclosure.yml
+- type: Security
+  url: security/relmcrm-com-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/relmcrm-com-domain-security.yml
+- type: Authentication
+  url: authentication/relmcrm-com-authentication.yml
+- type: OAuthScopes
+  url: scopes/relmcrm-com-scopes.yml
 - type: Website
   url: https://relmcrm.com/
+- type: DeveloperPortal
+  url: https://relmcrm.com/docs
+- type: Documentation
+  url: https://relmcrm.com/docs
+- type: APIReference
+  url: https://relmcrm.com/docs
+- type: GettingStarted
+  url: https://relmcrm.com/docs
+- type: Support
+  url: https://relmcrm.com/support
+- type: Pricing
+  url: https://relmcrm.com/#pricing
+- type: SignUp
+  url: https://app.relmcrm.com/
+- type: Login
+  url: https://app.relmcrm.com/
+- type: TermsOfService
+  url: https://relmcrm.com/terms
+- type: PrivacyPolicy
+  url: https://relmcrm.com/privacy
+- type: ChangeLog
+  url: https://relmcrm.com/changelog
+- type: ChangeLog
+  url: changelog/relmcrm-com-changelog.yml
+- type: StatusPage
+  url: https://relmcrm.com/status
+- type: SecurityPolicy
+  url: https://relmcrm.com/security
+- type: LLMsTxt
+  url: llms/relmcrm-com-llms.txt
+- type: LLMsTxt
+  name: Provider-hosted llms.txt
+  url: https://relmcrm.com/llms.txt
+- type: WellKnown
+  url: well-known/relmcrm-com-well-known.yml
+- type: SecurityTxt
+  url: well-known/relmcrm-com-security.txt
+- type: AgentCard
+  url: a2a/relmcrm-com-a2a.yml
+- type: MCPServer
+  url: mcp/relmcrm-com-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/relmcrm-com-tool-crosswalk.yml
+- type: Packages
+  url: packages/relmcrm-com-packages.yml
+- type: SDKs
+  url: packages/relmcrm-com-packages.yml
+- type: Plans
+  url: plans/relmcrm-com-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/relmcrm-com-rate-limits.yml
+- type: Sandbox
+  url: sandbox/relmcrm-com-sandbox.yml
+- type: Conventions
+  url: conventions/relmcrm-com-conventions.yml
+- type: Idempotency
+  url: conventions/relmcrm-com-conventions.yml
+- type: ErrorCatalog
+  url: errors/relmcrm-com-problem-types.yml
+- type: DataModel
+  url: data-model/relmcrm-com-data-model.yml
+- type: Lifecycle
+  url: lifecycle/relmcrm-com-lifecycle.yml
+- type: Conformance
+  url: conformance/relmcrm-com-conformance.yml
+- type: Webhooks
+  url: asyncapi/relmcrm-com-webhooks.yml
+- type: Overlay
+  url: overlays/relmcrm-com-openapi-overlay.yaml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Subprocessors
+  url: https://relmcrm.com/privacy
+- type: DataResidency
+  url: https://relmcrm.com/privacy
+- type: DataSubjectRequest
+  url: https://relmcrm.com/privacy
+- type: ExitAssistance
+  url: https://relmcrm.com/terms
+- type: RegulatoryPosture
+  url: regulatory/relmcrm-com-regulatory-posture.yml
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 36
+  pass: local-v3

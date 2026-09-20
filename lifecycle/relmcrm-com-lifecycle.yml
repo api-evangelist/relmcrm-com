@@ -1,0 +1,48 @@
+generated: '2026-09-19'
+method: searched
+source: https://relmcrm.com/changelog + https://relmcrm.com/terms (7. Availability; 12. Changes; 6. Ending) + https://relmcrm.com/status + https://relmcrm.com/support + openapi/_original/relmcrm-com-openapi.json (info.version, deprecated flags)
+versioning:
+  scheme: path-versioned (/v1) + semver product version
+  current_path_version: v1
+  current_product_version: 0.17.1
+  version_agreement: OpenAPI info.version, the agent card version, the MCP serverInfo.version and /.well-known/mcp.json all read 0.17.1, matching the newest changelog entry (2026-07-28) — one release number across every surface.
+  notes: The base https://api.relmcrm.com/v1 carries the major version; minor/patch releases ship additively under it and are logged on the changelog with a version tag.
+changelog:
+  url: https://relmcrm.com/changelog
+  artifact: changelog/relmcrm-com-changelog.yml
+  machine_readable: false
+  notes: Dated, versioned, human-written entries tagged New/Improved/Fixed, newest first, server-rendered HTML (readable without JavaScript). No RSS/Atom/JSON feed.
+status_page:
+  url: https://relmcrm.com/status
+  provider: first-party page on the marketing site
+  machine_readable_api: false
+  notes: >-
+    The page ("System status — Live checks from your browser, refreshed every 30s") runs its checks client-side
+    in the visitor's browser; the served HTML carries no component state and there is no summary JSON. Linked
+    from the support page and named in the terms. status.relmcrm.com does not resolve.
+  probed:
+  - {url: https://relmcrm.com/status, status: 200, checked: '2026-09-19'}
+  - {url: https://status.relmcrm.com/, status: dns-unresolved, checked: '2026-09-19'}
+sla:
+  published: false
+  statement: '"We work to keep Relm available and publish status at relmcrm.com/status, but we do not offer a contractual uptime guarantee, and there is no service-credit scheme. We will not pretend otherwise: Relm is an early-stage product from a small team." — https://relmcrm.com/terms §7'
+  support_response: '"We aim to answer within one business day" (https://relmcrm.com/support); privacy requests within 30 days.'
+deprecation:
+  policy_documented: partial
+  policy_statement: '"We may change or remove features. If a change would break your integration, we will give reasonable notice through the changelog and, for anything significant, by email." — https://relmcrm.com/terms §7'
+  notice_period: not quantified ("reasonable notice"); price changes and terms changes carry an explicit 30 days
+  sunset_headers: not documented (no Deprecation / Sunset header, RFC 8594, anywhere in docs or spec)
+  deprecated_operations: []
+  notes: >-
+    No operation in the 72-operation OpenAPI carries deprecated: true, and no versioning/deprecation page
+    exists beyond the terms clause. The clause is a real breaking-change notice commitment but names no window
+    and no mechanism beyond the changelog and email, so no Deprecation pointer is emitted: recording it as a
+    published deprecation policy would overstate it.
+termination_and_exit:
+  provider_termination_notice: 30 days, with a pro-rata refund and time to export through the API (terms §6)
+  data_export: '"Your CRM content is exportable at any time through the same API you put it in with. There is no lock-in and no export fee." (privacy policy)'
+observed_release_cadence:
+  window: '2026-07-20 to 2026-07-28'
+  releases: 14 tagged versions (v0.8.4 -> v0.17.1) in nine days per the changelog
+  breaking_changes_logged: 0
+  note: Rapid additive cadence around launch; nothing dated after 2026-07-28 on the changelog as of this pass, so the surface has been stable for ~7 weeks.
