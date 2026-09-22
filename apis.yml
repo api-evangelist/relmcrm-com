@@ -59,7 +59,7 @@ tags:
 - Deals
 - Sales Pipeline
 - Automation
-- Webhooks
+- Webhook
 - MCP
 - A2A
 - AI Agents
@@ -98,7 +98,7 @@ apis:
   - Deals
   - Sales Pipeline
   - Automation
-  - Webhooks
+  - Webhook
   tags_raw:
   - CRM
   - Sales
