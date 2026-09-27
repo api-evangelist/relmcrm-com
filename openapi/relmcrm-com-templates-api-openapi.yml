@@ -1,0 +1,204 @@
+openapi: 3.2.0
+info:
+  title: Relmcrm Com Templates API
+  version: 0.17.1
+  contact:
+    name: Relm
+    url: https://relmcrm.com/
+  license:
+    name: Proprietary
+  description: 'Operations tagged Templates across 2 of this provider''s published API definitions: relmcrm-com-openapi.json, relmcrm-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.relmcrm.com/v1
+  description: Production
+security:
+- bearerAuth: []
+- oauth2:
+  - crm
+tags:
+- name: Templates
+paths:
+  /templates:
+    get:
+      tags:
+      - Templates
+      operationId: listTemplates
+      summary: List email templates
+      responses:
+        '200':
+          description: Templates
+          content:
+            application/json:
+              schema:
+                type: object
+        default:
+          $ref: '#/components/responses/Problem'
+    post:
+      tags:
+      - Templates
+      operationId: createTemplate
+      summary: Create a reusable email template
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              - html
+              properties:
+                name:
+                  type: string
+                key:
+                  type: string
+                subject:
+                  type: string
+                html:
+                  type: string
+                text:
+                  type: string
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+        default:
+          $ref: '#/components/responses/Problem'
+    servers:
+    - url: https://api.relmcrm.com/v1
+      description: Production
+  /templates/{id}:
+    parameters:
+    - $ref: '#/components/parameters/IdPath'
+    get:
+      tags:
+      - Templates
+      operationId: getTemplate
+      summary: Fetch a template
+      responses:
+        '200':
+          description: Template
+          content:
+            application/json:
+              schema:
+                type: object
+        default:
+          $ref: '#/components/responses/Problem'
+    patch:
+      tags:
+      - Templates
+      operationId: updateTemplate
+      summary: Update a template
+      parameters:
+      - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Template
+          content:
+            application/json:
+              schema:
+                type: object
+        default:
+          $ref: '#/components/responses/Problem'
+    delete:
+      tags:
+      - Templates
+      operationId: deleteTemplate
+      summary: Delete a template
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deleted'
+        default:
+          $ref: '#/components/responses/Problem'
+    servers:
+    - url: https://api.relmcrm.com/v1
+      description: Production
+components:
+  parameters:
+    IfMatch:
+      name: If-Match
+      in: header
+      schema:
+        type: string
+      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    Problem:
+      type: object
+      description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.
+      properties:
+        type:
+          type: string
+          format: uri
+          example: https://relmcrm.com/errors/unknown_value
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        code:
+          type: string
+          example: unknown_value
+        field:
+          type: string
+        valid_options:
+          type: array
+          items:
+            type: string
+        suggestion:
+          type: string
+        request_id:
+          type: string
+    Deleted:
+      type: object
+      properties:
+        id:
+          type: string
+        object:
+          type: string
+        deleted:
+          type: boolean
+  responses:
+    Problem:
+      description: RFC-9457 problem+json error.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Workspace-scoped API key. relm_live_... (live) or relm_test_... (free, isolated test mode). Mint at https://app.relmcrm.com/.
+    oauth2:
+      type: oauth2
+      description: 'OAuth 2.1 with PKCE (S256) and dynamic client registration (RFC 7591). Live mode only; test mode is API-key only. Discovery: /.well-known/oauth-authorization-server.'
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.relmcrm.com/oauth/authorize
+          tokenUrl: https://api.relmcrm.com/oauth/token
+          refreshUrl: https://api.relmcrm.com/oauth/token
+          scopes:
+            crm: Read and write the connected Relm workspace
+x-refined-from:
+- relmcrm-com-openapi.json
+- relmcrm-com-openapi.yml

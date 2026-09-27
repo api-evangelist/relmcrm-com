@@ -63,7 +63,7 @@ tags:
 - MCP
 - A2A
 - AI Agents
-- agent-native
+- Agent-Native
 - United Arab Emirates
 tags_raw:
 - CRM
@@ -78,79 +78,25 @@ tags_raw:
 - AI agents
 - Agent-native
 - United Arab Emirates
+- agent-native
 apis:
-- aid: relmcrm-com:relm-crm-rest-api
-  name: Relm CRM REST API
-  description: >-
-    REST surface for the whole Relm workspace — contacts, companies, deals, activities (full CRUD with soft
-    delete + restore), pipelines and stages, custom fields / enum values / object types, automations, drip
-    sequences, templates, BYO messaging connections, webhooks with signed deliveries, cross-object search, a
-    100-operation batch endpoint, usage and spend-cap settings, and a live self-describing GET /schema. 72
-    operations across 41 paths, OpenAPI 3.1.0, servers[] https://api.relmcrm.com/v1. Bearer key or OAuth 2.1;
-    RFC 9457 errors; keyset cursor pagination; Idempotency-Key on the four core creates; If-Match on updates.
-  image: https://relmcrm.com/og.png
-  humanURL: https://relmcrm.com/docs
-  baseURL: https://api.relmcrm.com/v1
-  tags:
-  - CRM
-  - Sales
-  - Contacts
-  - Deals
-  - Sales Pipeline
-  - Automation
-  - Webhook
-  tags_raw:
-  - CRM
-  - Sales
-  - Contacts
-  - Deals
-  - Sales pipeline
-  - Automation
-  - Webhooks
-  properties:
-  - type: OpenAPI
-    url: openapi/relmcrm-com-openapi.yml
-  - type: OpenAPI
-    name: Provider-hosted OpenAPI 3.1 (source of openapi/_original/relmcrm-com-openapi.json)
-    url: https://relmcrm.com/openapi.json
-  - type: Documentation
-    url: https://relmcrm.com/docs
-  - type: APIReference
-    url: https://relmcrm.com/docs
-  - type: Conventions
-    url: conventions/relmcrm-com-conventions.yml
-  - type: Idempotency
-    url: conventions/relmcrm-com-conventions.yml
-  - type: ErrorCatalog
-    url: errors/relmcrm-com-problem-types.yml
-  - type: DataModel
-    url: data-model/relmcrm-com-data-model.yml
-  - type: Overlay
-    url: overlays/relmcrm-com-openapi-overlay.yaml
-  - type: Webhooks
-    url: asyncapi/relmcrm-com-webhooks.yml
-  - type: Sandbox
-    url: sandbox/relmcrm-com-sandbox.yml
-  - type: RateLimits
-    url: rate-limits/relmcrm-com-rate-limits.yml
-  - type: SDKs
-    url: packages/relmcrm-com-packages.yml
 - aid: relmcrm-com:relm-mcp-server
   name: Relm MCP Server
   description: >-
-    First-party hosted Model Context Protocol server (Streamable HTTP) at https://api.relmcrm.com/mcp. 41 typed
-    tools covering every REST capability — schema discovery, search, list/get/create/update/delete/restore on
-    the four core objects, pipelines and stages, registry (types, fields, enum values), batch, automations,
-    sequences with a dry-run preview, templates, connections, webhooks, usage and spend cap — each carrying MCP
-    annotations (readOnlyHint / destructiveHint) and an oauth2 securitySchemes declaration. initialize and
-    tools/list are anonymous; tools/call requires OAuth 2.1 (PKCE, dynamic client registration, scope crm) or a
-    workspace bearer key, and an unauthenticated call returns the RFC 9728 WWW-Authenticate challenge.
+    First-party hosted Model Context Protocol server (Streamable HTTP) at https://api.relmcrm.com/mcp.
+    41 typed tools covering every REST capability — schema discovery, search, list/get/create/update/delete/restore
+    on the four core objects, pipelines and stages, registry (types, fields, enum values), batch, automations,
+    sequences with a dry-run preview, templates, connections, webhooks, usage and spend cap — each carrying
+    MCP annotations (readOnlyHint / destructiveHint) and an oauth2 securitySchemes declaration. initialize
+    and tools/list are anonymous; tools/call requires OAuth 2.1 (PKCE, dynamic client registration, scope
+    crm) or a workspace bearer key, and an unauthenticated call returns the RFC 9728 WWW-Authenticate
+    challenge.
   image: https://relmcrm.com/og.png
   humanURL: https://relmcrm.com/docs#mcp
   baseURL: https://api.relmcrm.com/mcp
   tags:
   - MCP
-  - agent-native
+  - Agent-Native
   - CRM
   - AI Agents
   tags_raw:
@@ -158,6 +104,7 @@ apis:
   - Agent-native
   - CRM
   - AI agents
+  - agent-native
   properties:
   - type: MCPServer
     url: mcp/relmcrm-com-mcp.yml
@@ -174,18 +121,18 @@ apis:
 - aid: relmcrm-com:relm-a2a-agent
   name: Relm A2A Agent
   description: >-
-    Agent2Agent (A2A 0.3.0) JSON-RPC endpoint at https://api.relmcrm.com/a2a. A message/send whose data part is
-    {tool, arguments} runs one of the same 41 MCP tools synchronously and returns a terminal Task. Discovered by
-    the agent card at https://relmcrm.com/.well-known/agent-card.json (also served at the legacy
-    /.well-known/agent.json), which declares seven skills — manage contacts, companies, deals; log activities;
-    automations; webhooks; describe schema — with oauth2 and bearer security schemes. Graded conformant against
-    A2A 1.0.0. Listed on a2aregistry.org.
+    Agent2Agent (A2A 0.3.0) JSON-RPC endpoint at https://api.relmcrm.com/a2a. A message/send whose data
+    part is {tool, arguments} runs one of the same 41 MCP tools synchronously and returns a terminal Task.
+    Discovered by the agent card at https://relmcrm.com/.well-known/agent-card.json (also served at the
+    legacy /.well-known/agent.json), which declares seven skills — manage contacts, companies, deals;
+    log activities; automations; webhooks; describe schema — with oauth2 and bearer security schemes.
+    Graded conformant against A2A 1.0.0. Listed on a2aregistry.org.
   image: https://relmcrm.com/og.png
   humanURL: https://relmcrm.com/agents
   baseURL: https://api.relmcrm.com/a2a
   tags:
   - A2A
-  - agent-native
+  - Agent-Native
   - CRM
   - AI Agents
   tags_raw:
@@ -193,6 +140,7 @@ apis:
   - Agent-native
   - CRM
   - AI agents
+  - agent-native
   properties:
   - type: AgentCard
     url: a2a/relmcrm-com-a2a.yml
@@ -201,6 +149,426 @@ apis:
     url: https://relmcrm.com/.well-known/agent-card.json
   - type: Documentation
     url: https://relmcrm.com/agents
+- aid: relmcrm-com:relmcrm-com-activities-api
+  name: Relm Activities API
+  description: The Activities API from Relm — 3 operation(s) for activities.
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - Activities
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-activities-api-openapi.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
+- aid: relmcrm-com:relmcrm-com-automations-api
+  name: Relm Automations API
+  description: The Automations API from Relm — 3 operation(s) for automations.
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - Automations
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-automations-api-openapi.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
+- aid: relmcrm-com:relmcrm-com-batch-api
+  name: Relm Batch API
+  description: The Batch API from Relm — 1 operation(s) for batch.
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - Batch
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-batch-api-openapi.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
+- aid: relmcrm-com:relmcrm-com-companies-api
+  name: Relm Companies API
+  description: The Companies API from Relm — 3 operation(s) for companies.
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - Companies
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-companies-api-openapi.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
+- aid: relmcrm-com:relmcrm-com-connections-api
+  name: Relm Connections API
+  description: The Connections API from Relm — 2 operation(s) for connections.
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - Connections
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-connections-api-openapi.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
+- aid: relmcrm-com:relmcrm-com-contacts-api
+  name: Relm Contacts API
+  description: The Contacts API from Relm — 3 operation(s) for contacts.
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - Contacts
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-contacts-api-openapi.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
+- aid: relmcrm-com:relmcrm-com-deals-api
+  name: Relm Deals API
+  description: The Deals API from Relm — 3 operation(s) for deals.
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - Deals
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-deals-api-openapi.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
+- aid: relmcrm-com:relmcrm-com-discovery-api
+  name: Relm Discovery API
+  description: Self-describing schema, usage, settings.
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - Discovery
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-discovery-api-openapi.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
+- aid: relmcrm-com:relmcrm-com-pipelines-api
+  name: Relm Pipelines API
+  description: The Pipelines API from Relm — 6 operation(s) for pipelines.
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - Pipelines
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-pipelines-api-openapi.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
+- aid: relmcrm-com:relmcrm-com-registry-api
+  name: Relm Registry API
+  description: Custom fields, enums, object types.
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - Registry
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-registry-api-openapi.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
+- aid: relmcrm-com:relmcrm-com-search-api
+  name: Relm Search API
+  description: The Search API from Relm — 1 operation(s) for search.
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - Search
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-search-api-openapi.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
+- aid: relmcrm-com:relmcrm-com-sequences-api
+  name: Relm Sequences API
+  description: The Sequences API from Relm — 5 operation(s) for sequences.
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - Sequences
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-sequences-api-openapi.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
+- aid: relmcrm-com:relmcrm-com-templates-api
+  name: Relm Templates API
+  description: The Templates API from Relm — 2 operation(s) for templates.
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - Templates
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-templates-api-openapi.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
+- aid: relmcrm-com:relmcrm-com-webhooks-api
+  name: Relm Webhooks API
+  description: The Webhooks API from Relm — 3 operation(s) for webhooks.
+  humanURL: https://relmcrm.com/docs
+  baseURL: https://api.relmcrm.com/v1
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/relmcrm-com-webhooks-api-openapi.yml
+  - type: Documentation
+    url: https://relmcrm.com/docs
+  - type: APIReference
+    url: https://relmcrm.com/docs
+  - type: Conventions
+    url: conventions/relmcrm-com-conventions.yml
+  - type: Idempotency
+    url: conventions/relmcrm-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/relmcrm-com-problem-types.yml
+  - type: DataModel
+    url: data-model/relmcrm-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/relmcrm-com-webhooks.yml
+  - type: Sandbox
+    url: sandbox/relmcrm-com-sandbox.yml
+  - type: RateLimits
+    url: rate-limits/relmcrm-com-rate-limits.yml
+  - type: SDKs
+    url: packages/relmcrm-com-packages.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -305,3 +673,10 @@ x-enrichment:
   status: enriched
   artifacts_added: 36
   pass: local-v3
+x-a2a:
+  verified: true
+  probed: '2026-09-26'
+  url: "https://relmcrm.com/.well-known/agent-card.json"
+  grade: "conformant"
+  protocol_version: "0.3.0"
+  control: 404

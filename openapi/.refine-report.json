@@ -1,0 +1,49 @@
+{
+  "provider": "relmcrm-com",
+  "sources": [
+    "_original/relmcrm-com-openapi.json",
+    "relmcrm-com-openapi.yml"
+  ],
+  "outputs": [
+    "relmcrm-com-activities-api-openapi.yml",
+    "relmcrm-com-automations-api-openapi.yml",
+    "relmcrm-com-batch-api-openapi.yml",
+    "relmcrm-com-companies-api-openapi.yml",
+    "relmcrm-com-connections-api-openapi.yml",
+    "relmcrm-com-contacts-api-openapi.yml",
+    "relmcrm-com-deals-api-openapi.yml",
+    "relmcrm-com-discovery-api-openapi.yml",
+    "relmcrm-com-pipelines-api-openapi.yml",
+    "relmcrm-com-registry-api-openapi.yml",
+    "relmcrm-com-search-api-openapi.yml",
+    "relmcrm-com-sequences-api-openapi.yml",
+    "relmcrm-com-templates-api-openapi.yml",
+    "relmcrm-com-webhooks-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/relmcrm-com-openapi.yml"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "relmcrm-com-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "relmcrm-com-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "tag 'Activities' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
+    "tag 'Automations' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
+    "tag 'Batch' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
+    "tag 'Companies' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
+    "tag 'Connections' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
+    "tag 'Contacts' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
+    "tag 'Deals' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
+    "tag 'Discovery' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
+    "tag 'Pipelines' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
+    "tag 'Registry' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
+    "tag 'Search' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
+    "tag 'Sequences' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
+    "tag 'Templates' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
+    "tag 'Webhooks' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
+    "apis.yml register: written (+14 apis, 16 total)"
+  ],
+  "skipped": []
+}
