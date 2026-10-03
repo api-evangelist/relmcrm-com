@@ -1,8 +1,7 @@
 {
   "provider": "relmcrm-com",
   "sources": [
-    "_original/relmcrm-com-openapi.json",
-    "relmcrm-com-openapi.yml"
+    "_original/relmcrm-com-openapi.json"
   ],
   "outputs": [
     "relmcrm-com-activities-api-openapi.yml",
@@ -20,30 +19,30 @@
     "relmcrm-com-templates-api-openapi.yml",
     "relmcrm-com-webhooks-api-openapi.yml"
   ],
-  "archived": [
-    "archived openapi/relmcrm-com-openapi.yml"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
+    "1 archived document(s) dropped as subsets of other archived documents",
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "relmcrm-com-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "relmcrm-com-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "tag 'Activities' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
-    "tag 'Automations' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
-    "tag 'Batch' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
-    "tag 'Companies' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
-    "tag 'Connections' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
-    "tag 'Contacts' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
-    "tag 'Deals' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
-    "tag 'Discovery' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
-    "tag 'Pipelines' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
-    "tag 'Registry' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
-    "tag 'Search' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
-    "tag 'Sequences' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
-    "tag 'Templates' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
-    "tag 'Webhooks' spans 2 source specs (relmcrm-com-openapi.json, relmcrm-com-openapi.yml): per-path servers applied",
-    "apis.yml register: written (+14 apis, 16 total)"
+    "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "_original/relmcrm-com-openapi.yml: archived document superseded by a larger archived document",
+    "relmcrm-com-activities-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "relmcrm-com-automations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "relmcrm-com-batch-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "relmcrm-com-companies-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "relmcrm-com-connections-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "relmcrm-com-contacts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "relmcrm-com-deals-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "relmcrm-com-discovery-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "relmcrm-com-pipelines-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "relmcrm-com-registry-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "relmcrm-com-search-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "relmcrm-com-sequences-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "relmcrm-com-templates-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "relmcrm-com-webhooks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

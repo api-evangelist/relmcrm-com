@@ -1,13 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Relmcrm Com Activities API
+  title: Relm CRM Activities API
   version: 0.17.1
+  summary: API-first CRM built for LLMs and AI agents.
+  description: REST surface for Relm.
   contact:
     name: Relm
     url: https://relmcrm.com/
   license:
     name: Proprietary
-  description: 'Operations tagged Activities across 2 of this provider''s published API definitions: relmcrm-com-openapi.json, relmcrm-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.relmcrm.com/v1
   description: Production
@@ -72,9 +73,6 @@ paths:
                 $ref: '#/components/schemas/Activity'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /activities/{id}:
     parameters:
     - $ref: '#/components/parameters/IdPath'
@@ -128,9 +126,6 @@ paths:
                 $ref: '#/components/schemas/Deleted'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /activities/{id}/restore:
     parameters:
     - $ref: '#/components/parameters/IdPath'
@@ -148,9 +143,6 @@ paths:
                 $ref: '#/components/schemas/Activity'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
 components:
   parameters:
     Limit:
@@ -161,49 +153,62 @@ components:
         default: 25
         maximum: 100
       description: Page size (default 25, max 100).
-    IfMatch:
-      name: If-Match
-      in: header
-      schema:
-        type: string
-      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
-    IdempotencyKey:
-      name: Idempotency-Key
-      in: header
-      schema:
-        type: string
-      description: 'Safely retry a create: same key + same body replays the original result.'
-    IdPath:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    Cursor:
-      name: cursor
-      in: query
-      schema:
-        type: string
-      description: Opaque keyset cursor from a prior next_cursor.
     IncludeDeleted:
       name: include_deleted
       in: query
       schema:
         type: boolean
       description: Include soft-deleted rows.
+    IfMatch:
+      name: If-Match
+      in: header
+      schema:
+        type: string
+      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+      description: Opaque keyset cursor from a prior next_cursor.
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      schema:
+        type: string
+      description: 'Safely retry a create: same key + same body replays the original result.'
+  responses:
+    Problem:
+      description: RFC-9457 problem+json error.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
   schemas:
-    ListMeta:
+    ActivityInput:
       type: object
+      description: Must attach to a contact_id and/or deal_id.
       properties:
-        object:
+        type:
           type: string
-          const: list
-        has_more:
-          type: boolean
-        next_cursor:
-          type:
-          - string
-          - 'null'
+          description: A registered activity.type (note/email/call/meeting/task/...).
+        body:
+          type: string
+        contact_id:
+          type: string
+        deal_id:
+          type: string
+        occurred_at:
+          type: string
+          description: ISO datetime; backdates imported history.
+        custom_fields:
+          type: object
     Problem:
       type: object
       description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.
@@ -231,24 +236,36 @@ components:
           type: string
         request_id:
           type: string
-    ActivityInput:
+    Deleted:
       type: object
-      description: Must attach to a contact_id and/or deal_id.
       properties:
-        type:
+        id:
           type: string
-          description: A registered activity.type (note/email/call/meeting/task/...).
-        body:
+        object:
           type: string
-        contact_id:
+        deleted:
+          type: boolean
+    ListMeta:
+      type: object
+      properties:
+        object:
           type: string
-        deal_id:
-          type: string
-        occurred_at:
-          type: string
-          description: ISO datetime; backdates imported history.
-        custom_fields:
-          type: object
+          const: list
+        has_more:
+          type: boolean
+        next_cursor:
+          type:
+          - string
+          - 'null'
+    ActivityList:
+      allOf:
+      - $ref: '#/components/schemas/ListMeta'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Activity'
     Activity:
       type: object
       properties:
@@ -286,31 +303,6 @@ components:
           type: string
         deleted:
           type: boolean
-    Deleted:
-      type: object
-      properties:
-        id:
-          type: string
-        object:
-          type: string
-        deleted:
-          type: boolean
-    ActivityList:
-      allOf:
-      - $ref: '#/components/schemas/ListMeta'
-      - type: object
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/Activity'
-  responses:
-    Problem:
-      description: RFC-9457 problem+json error.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
   securitySchemes:
     bearerAuth:
       type: http
@@ -326,6 +318,3 @@ components:
           refreshUrl: https://api.relmcrm.com/oauth/token
           scopes:
             crm: Read and write the connected Relm workspace
-x-refined-from:
-- relmcrm-com-openapi.json
-- relmcrm-com-openapi.yml

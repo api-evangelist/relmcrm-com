@@ -1,13 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Relmcrm Com Pipelines API
+  title: Relm CRM Pipelines API
   version: 0.17.1
+  summary: API-first CRM built for LLMs and AI agents.
+  description: REST surface for Relm.
   contact:
     name: Relm
     url: https://relmcrm.com/
   license:
     name: Proprietary
-  description: 'Operations tagged Pipelines across 2 of this provider''s published API definitions: relmcrm-com-openapi.json, relmcrm-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.relmcrm.com/v1
   description: Production
@@ -53,9 +54,6 @@ paths:
                 $ref: '#/components/schemas/Pipeline'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /pipelines/{key}:
     parameters:
     - name: key
@@ -121,9 +119,6 @@ paths:
                 $ref: '#/components/schemas/Deleted'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /pipelines/{key}/default:
     parameters:
     - name: key
@@ -145,9 +140,6 @@ paths:
                 $ref: '#/components/schemas/Pipeline'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /pipelines/{key}/stages:
     parameters:
     - name: key
@@ -191,9 +183,6 @@ paths:
                 $ref: '#/components/schemas/Pipeline'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /pipelines/{key}/stages/reorder:
     parameters:
     - name: key
@@ -228,9 +217,6 @@ paths:
                 $ref: '#/components/schemas/Pipeline'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /pipelines/{key}/stages/{stage}:
     parameters:
     - name: key
@@ -289,63 +275,8 @@ paths:
                 $ref: '#/components/schemas/Pipeline'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
 components:
   schemas:
-    PipelineInput:
-      type: object
-      properties:
-        key:
-          type: string
-        name:
-          type: string
-        is_default:
-          type: boolean
-        stages:
-          type: array
-          items:
-            type: object
-            properties:
-              key:
-                type: string
-                description: Slugified on write (lowercase, [a-z0-9_]); original text kept as label.
-              label:
-                type: string
-              type:
-                type: string
-                enum:
-                - open
-                - won
-                - lost
-    Problem:
-      type: object
-      description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.
-      properties:
-        type:
-          type: string
-          format: uri
-          example: https://relmcrm.com/errors/unknown_value
-        title:
-          type: string
-        status:
-          type: integer
-        detail:
-          type: string
-        code:
-          type: string
-          example: unknown_value
-        field:
-          type: string
-        valid_options:
-          type: array
-          items:
-            type: string
-        suggestion:
-          type: string
-        request_id:
-          type: string
     Pipeline:
       type: object
       properties:
@@ -381,6 +312,58 @@ components:
                 - won
                 - lost
                 description: Semantic type; default open.
+    Problem:
+      type: object
+      description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.
+      properties:
+        type:
+          type: string
+          format: uri
+          example: https://relmcrm.com/errors/unknown_value
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        code:
+          type: string
+          example: unknown_value
+        field:
+          type: string
+        valid_options:
+          type: array
+          items:
+            type: string
+        suggestion:
+          type: string
+        request_id:
+          type: string
+    PipelineInput:
+      type: object
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+        is_default:
+          type: boolean
+        stages:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+                description: Slugified on write (lowercase, [a-z0-9_]); original text kept as label.
+              label:
+                type: string
+              type:
+                type: string
+                enum:
+                - open
+                - won
+                - lost
     Deleted:
       type: object
       properties:
@@ -412,6 +395,3 @@ components:
           refreshUrl: https://api.relmcrm.com/oauth/token
           scopes:
             crm: Read and write the connected Relm workspace
-x-refined-from:
-- relmcrm-com-openapi.json
-- relmcrm-com-openapi.yml

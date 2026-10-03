@@ -1,13 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Relmcrm Com Automations API
+  title: Relm CRM Automations API
   version: 0.17.1
+  summary: API-first CRM built for LLMs and AI agents.
+  description: REST surface for Relm.
   contact:
     name: Relm
     url: https://relmcrm.com/
   license:
     name: Proprietary
-  description: 'Operations tagged Automations across 2 of this provider''s published API definitions: relmcrm-com-openapi.json, relmcrm-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.relmcrm.com/v1
   description: Production
@@ -53,9 +54,6 @@ paths:
                 type: object
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /automations/{id}:
     parameters:
     - $ref: '#/components/parameters/IdPath'
@@ -112,9 +110,6 @@ paths:
                 $ref: '#/components/schemas/Deleted'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /automations-capabilities:
     get:
       tags:
@@ -130,10 +125,14 @@ paths:
                 type: object
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
 components:
+  responses:
+    Problem:
+      description: RFC-9457 problem+json error.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
   schemas:
     AutomationInput:
       type: object
@@ -220,13 +219,6 @@ components:
       required: true
       schema:
         type: string
-  responses:
-    Problem:
-      description: RFC-9457 problem+json error.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
   securitySchemes:
     bearerAuth:
       type: http
@@ -242,6 +234,3 @@ components:
           refreshUrl: https://api.relmcrm.com/oauth/token
           scopes:
             crm: Read and write the connected Relm workspace
-x-refined-from:
-- relmcrm-com-openapi.json
-- relmcrm-com-openapi.yml

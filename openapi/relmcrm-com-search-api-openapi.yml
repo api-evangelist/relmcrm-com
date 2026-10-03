@@ -1,13 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Relmcrm Com Search API
+  title: Relm CRM Search API
   version: 0.17.1
+  summary: API-first CRM built for LLMs and AI agents.
+  description: REST surface for Relm.
   contact:
     name: Relm
     url: https://relmcrm.com/
   license:
     name: Proprietary
-  description: 'Operations tagged Search across 2 of this provider''s published API definitions: relmcrm-com-openapi.json, relmcrm-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.relmcrm.com/v1
   description: Production
@@ -46,9 +47,6 @@ paths:
                 $ref: '#/components/schemas/SearchResult'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
 components:
   responses:
     Problem:
@@ -121,6 +119,3 @@ components:
           refreshUrl: https://api.relmcrm.com/oauth/token
           scopes:
             crm: Read and write the connected Relm workspace
-x-refined-from:
-- relmcrm-com-openapi.json
-- relmcrm-com-openapi.yml

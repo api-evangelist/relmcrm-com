@@ -1,13 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Relmcrm Com Connections API
+  title: Relm CRM Connections API
   version: 0.17.1
+  summary: API-first CRM built for LLMs and AI agents.
+  description: REST surface for Relm.
   contact:
     name: Relm
     url: https://relmcrm.com/
   license:
     name: Proprietary
-  description: 'Operations tagged Connections across 2 of this provider''s published API definitions: relmcrm-com-openapi.json, relmcrm-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.relmcrm.com/v1
   description: Production
@@ -66,9 +67,6 @@ paths:
                 type: object
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /connections/{id}:
     parameters:
     - $ref: '#/components/parameters/IdPath'
@@ -86,20 +84,8 @@ paths:
                 $ref: '#/components/schemas/Deleted'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
 components:
   schemas:
-    Deleted:
-      type: object
-      properties:
-        id:
-          type: string
-        object:
-          type: string
-        deleted:
-          type: boolean
     Problem:
       type: object
       description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.
@@ -127,6 +113,15 @@ components:
           type: string
         request_id:
           type: string
+    Deleted:
+      type: object
+      properties:
+        id:
+          type: string
+        object:
+          type: string
+        deleted:
+          type: boolean
   responses:
     Problem:
       description: RFC-9457 problem+json error.
@@ -156,6 +151,3 @@ components:
           refreshUrl: https://api.relmcrm.com/oauth/token
           scopes:
             crm: Read and write the connected Relm workspace
-x-refined-from:
-- relmcrm-com-openapi.json
-- relmcrm-com-openapi.yml

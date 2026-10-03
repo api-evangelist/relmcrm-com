@@ -1,13 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Relmcrm Com Deals API
+  title: Relm CRM Deals API
   version: 0.17.1
+  summary: API-first CRM built for LLMs and AI agents.
+  description: REST surface for Relm.
   contact:
     name: Relm
     url: https://relmcrm.com/
   license:
     name: Proprietary
-  description: 'Operations tagged Deals across 2 of this provider''s published API definitions: relmcrm-com-openapi.json, relmcrm-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.relmcrm.com/v1
   description: Production
@@ -84,9 +85,6 @@ paths:
                 $ref: '#/components/schemas/Deal'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /deals/{id}:
     parameters:
     - $ref: '#/components/parameters/IdPath'
@@ -140,9 +138,6 @@ paths:
                 $ref: '#/components/schemas/Deleted'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /deals/{id}/restore:
     parameters:
     - $ref: '#/components/parameters/IdPath'
@@ -160,9 +155,6 @@ paths:
                 $ref: '#/components/schemas/Deal'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
 components:
   parameters:
     Limit:
@@ -173,49 +165,44 @@ components:
         default: 25
         maximum: 100
       description: Page size (default 25, max 100).
-    IfMatch:
-      name: If-Match
-      in: header
-      schema:
-        type: string
-      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
-    IdempotencyKey:
-      name: Idempotency-Key
-      in: header
-      schema:
-        type: string
-      description: 'Safely retry a create: same key + same body replays the original result.'
-    IdPath:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    Cursor:
-      name: cursor
-      in: query
-      schema:
-        type: string
-      description: Opaque keyset cursor from a prior next_cursor.
     IncludeDeleted:
       name: include_deleted
       in: query
       schema:
         type: boolean
       description: Include soft-deleted rows.
+    IfMatch:
+      name: If-Match
+      in: header
+      schema:
+        type: string
+      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+      description: Opaque keyset cursor from a prior next_cursor.
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      schema:
+        type: string
+      description: 'Safely retry a create: same key + same body replays the original result.'
+  responses:
+    Problem:
+      description: RFC-9457 problem+json error.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
   schemas:
-    ListMeta:
-      type: object
-      properties:
-        object:
-          type: string
-          const: list
-        has_more:
-          type: boolean
-        next_cursor:
-          type:
-          - string
-          - 'null'
     Problem:
       type: object
       description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.
@@ -243,49 +230,6 @@ components:
           type: string
         request_id:
           type: string
-    DealList:
-      allOf:
-      - $ref: '#/components/schemas/ListMeta'
-      - type: object
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/Deal'
-    DealInput:
-      type: object
-      required:
-      - title
-      properties:
-        title:
-          type: string
-        value_cents:
-          type: integer
-        currency:
-          type: string
-        pipeline:
-          type: string
-          description: Pipeline key or pl_ id (defaults to the default pipeline).
-        stage:
-          type: string
-          description: Stage key within the deal's pipeline.
-        company_id:
-          type: string
-        primary_contact_id:
-          type: string
-        close_date:
-          type: string
-        custom_fields:
-          type: object
-    Deleted:
-      type: object
-      properties:
-        id:
-          type: string
-        object:
-          type: string
-        deleted:
-          type: boolean
     Deal:
       type: object
       properties:
@@ -358,13 +302,61 @@ components:
           type: string
         deleted:
           type: boolean
-  responses:
-    Problem:
-      description: RFC-9457 problem+json error.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
+    DealInput:
+      type: object
+      required:
+      - title
+      properties:
+        title:
+          type: string
+        value_cents:
+          type: integer
+        currency:
+          type: string
+        pipeline:
+          type: string
+          description: Pipeline key or pl_ id (defaults to the default pipeline).
+        stage:
+          type: string
+          description: Stage key within the deal's pipeline.
+        company_id:
+          type: string
+        primary_contact_id:
+          type: string
+        close_date:
+          type: string
+        custom_fields:
+          type: object
+    Deleted:
+      type: object
+      properties:
+        id:
+          type: string
+        object:
+          type: string
+        deleted:
+          type: boolean
+    ListMeta:
+      type: object
+      properties:
+        object:
+          type: string
+          const: list
+        has_more:
+          type: boolean
+        next_cursor:
+          type:
+          - string
+          - 'null'
+    DealList:
+      allOf:
+      - $ref: '#/components/schemas/ListMeta'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Deal'
   securitySchemes:
     bearerAuth:
       type: http
@@ -380,6 +372,3 @@ components:
           refreshUrl: https://api.relmcrm.com/oauth/token
           scopes:
             crm: Read and write the connected Relm workspace
-x-refined-from:
-- relmcrm-com-openapi.json
-- relmcrm-com-openapi.yml

@@ -1,13 +1,14 @@
 openapi: 3.2.0
 info:
-  title: Relmcrm Com Sequences API
+  title: Relm CRM Sequences API
   version: 0.17.1
+  summary: API-first CRM built for LLMs and AI agents.
+  description: REST surface for Relm.
   contact:
     name: Relm
     url: https://relmcrm.com/
   license:
     name: Proprietary
-  description: 'Operations tagged Sequences across 2 of this provider''s published API definitions: relmcrm-com-openapi.json, relmcrm-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.relmcrm.com/v1
   description: Production
@@ -53,9 +54,6 @@ paths:
                 type: object
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /sequences/{id}:
     parameters:
     - $ref: '#/components/parameters/IdPath'
@@ -112,9 +110,6 @@ paths:
                 $ref: '#/components/schemas/Deleted'
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /sequences/{id}/preview:
     parameters:
     - $ref: '#/components/parameters/IdPath'
@@ -132,9 +127,6 @@ paths:
                 type: object
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /sequences/{id}/enrollments:
     parameters:
     - $ref: '#/components/parameters/IdPath'
@@ -152,9 +144,6 @@ paths:
                 type: object
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
   /sequences/{id}/enroll:
     parameters:
     - $ref: '#/components/parameters/IdPath'
@@ -185,17 +174,14 @@ paths:
                 type: object
         default:
           $ref: '#/components/responses/Problem'
-    servers:
-    - url: https://api.relmcrm.com/v1
-      description: Production
 components:
-  parameters:
-    IdPath:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
+  responses:
+    Problem:
+      description: RFC-9457 problem+json error.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
   schemas:
     Problem:
       type: object
@@ -224,6 +210,15 @@ components:
           type: string
         request_id:
           type: string
+    Deleted:
+      type: object
+      properties:
+        id:
+          type: string
+        object:
+          type: string
+        deleted:
+          type: boolean
     SequenceInput:
       type: object
       required:
@@ -255,22 +250,13 @@ components:
           type: boolean
         enabled:
           type: boolean
-    Deleted:
-      type: object
-      properties:
-        id:
-          type: string
-        object:
-          type: string
-        deleted:
-          type: boolean
-  responses:
-    Problem:
-      description: RFC-9457 problem+json error.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http
@@ -286,6 +272,3 @@ components:
           refreshUrl: https://api.relmcrm.com/oauth/token
           scopes:
             crm: Read and write the connected Relm workspace
-x-refined-from:
-- relmcrm-com-openapi.json
-- relmcrm-com-openapi.yml
