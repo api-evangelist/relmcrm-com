@@ -85,7 +85,30 @@ paths:
         default:
           $ref: '#/components/responses/Problem'
 components:
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  responses:
+    Problem:
+      description: RFC-9457 problem+json error.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
   schemas:
+    Deleted:
+      type: object
+      properties:
+        id:
+          type: string
+        object:
+          type: string
+        deleted:
+          type: boolean
     Problem:
       type: object
       description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.
@@ -113,29 +136,6 @@ components:
           type: string
         request_id:
           type: string
-    Deleted:
-      type: object
-      properties:
-        id:
-          type: string
-        object:
-          type: string
-        deleted:
-          type: boolean
-  responses:
-    Problem:
-      description: RFC-9457 problem+json error.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
-  parameters:
-    IdPath:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
   securitySchemes:
     bearerAuth:
       type: http

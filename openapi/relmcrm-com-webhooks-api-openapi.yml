@@ -126,24 +126,6 @@ paths:
           $ref: '#/components/responses/Problem'
 components:
   schemas:
-    WebhookInput:
-      type: object
-      required:
-      - url
-      properties:
-        url:
-          type: string
-          format: uri
-          description: Public https endpoint (test mode allows localhost).
-        events:
-          type: array
-          items:
-            type: string
-          description: Subset of the 5 events, or ["*"].
-        description:
-          type: string
-        enabled:
-          type: boolean
     Webhook:
       type: object
       properties:
@@ -170,6 +152,24 @@ components:
           description: whsec_...; returned ONLY on create.
         version:
           type: integer
+    WebhookInput:
+      type: object
+      required:
+      - url
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Public https endpoint (test mode allows localhost).
+        events:
+          type: array
+          items:
+            type: string
+          description: Subset of the 5 events, or ["*"].
+        description:
+          type: string
+        enabled:
+          type: boolean
     Problem:
       type: object
       description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.

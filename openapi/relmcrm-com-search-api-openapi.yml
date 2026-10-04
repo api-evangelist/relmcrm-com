@@ -56,6 +56,27 @@ components:
           schema:
             $ref: '#/components/schemas/Problem'
   schemas:
+    SearchResult:
+      type: object
+      properties:
+        object:
+          type: string
+          const: search
+        query:
+          type: string
+        has_more:
+          type: boolean
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              id:
+                type: string
+              title:
+                type: string
     Problem:
       type: object
       description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.
@@ -83,27 +104,6 @@ components:
           type: string
         request_id:
           type: string
-    SearchResult:
-      type: object
-      properties:
-        object:
-          type: string
-          const: search
-        query:
-          type: string
-        has_more:
-          type: boolean
-        results:
-          type: array
-          items:
-            type: object
-            properties:
-              type:
-                type: string
-              id:
-                type: string
-              title:
-                type: string
   securitySchemes:
     bearerAuth:
       type: http

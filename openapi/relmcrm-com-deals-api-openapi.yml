@@ -156,53 +156,32 @@ paths:
         default:
           $ref: '#/components/responses/Problem'
 components:
-  parameters:
-    Limit:
-      name: limit
-      in: query
-      schema:
-        type: integer
-        default: 25
-        maximum: 100
-      description: Page size (default 25, max 100).
-    IncludeDeleted:
-      name: include_deleted
-      in: query
-      schema:
-        type: boolean
-      description: Include soft-deleted rows.
-    IfMatch:
-      name: If-Match
-      in: header
-      schema:
-        type: string
-      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
-    Cursor:
-      name: cursor
-      in: query
-      schema:
-        type: string
-      description: Opaque keyset cursor from a prior next_cursor.
-    IdPath:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    IdempotencyKey:
-      name: Idempotency-Key
-      in: header
-      schema:
-        type: string
-      description: 'Safely retry a create: same key + same body replays the original result.'
-  responses:
-    Problem:
-      description: RFC-9457 problem+json error.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
   schemas:
+    DealInput:
+      type: object
+      required:
+      - title
+      properties:
+        title:
+          type: string
+        value_cents:
+          type: integer
+        currency:
+          type: string
+        pipeline:
+          type: string
+          description: Pipeline key or pl_ id (defaults to the default pipeline).
+        stage:
+          type: string
+          description: Stage key within the deal's pipeline.
+        company_id:
+          type: string
+        primary_contact_id:
+          type: string
+        close_date:
+          type: string
+        custom_fields:
+          type: object
     Problem:
       type: object
       description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.
@@ -230,6 +209,36 @@ components:
           type: string
         request_id:
           type: string
+    ListMeta:
+      type: object
+      properties:
+        object:
+          type: string
+          const: list
+        has_more:
+          type: boolean
+        next_cursor:
+          type:
+          - string
+          - 'null'
+    Deleted:
+      type: object
+      properties:
+        id:
+          type: string
+        object:
+          type: string
+        deleted:
+          type: boolean
+    DealList:
+      allOf:
+      - $ref: '#/components/schemas/ListMeta'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Deal'
     Deal:
       type: object
       properties:
@@ -302,61 +311,52 @@ components:
           type: string
         deleted:
           type: boolean
-    DealInput:
-      type: object
-      required:
-      - title
-      properties:
-        title:
-          type: string
-        value_cents:
-          type: integer
-        currency:
-          type: string
-        pipeline:
-          type: string
-          description: Pipeline key or pl_ id (defaults to the default pipeline).
-        stage:
-          type: string
-          description: Stage key within the deal's pipeline.
-        company_id:
-          type: string
-        primary_contact_id:
-          type: string
-        close_date:
-          type: string
-        custom_fields:
-          type: object
-    Deleted:
-      type: object
-      properties:
-        id:
-          type: string
-        object:
-          type: string
-        deleted:
-          type: boolean
-    ListMeta:
-      type: object
-      properties:
-        object:
-          type: string
-          const: list
-        has_more:
-          type: boolean
-        next_cursor:
-          type:
-          - string
-          - 'null'
-    DealList:
-      allOf:
-      - $ref: '#/components/schemas/ListMeta'
-      - type: object
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/Deal'
+  responses:
+    Problem:
+      description: RFC-9457 problem+json error.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  parameters:
+    IfMatch:
+      name: If-Match
+      in: header
+      schema:
+        type: string
+      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+      description: Opaque keyset cursor from a prior next_cursor.
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      schema:
+        type: string
+      description: 'Safely retry a create: same key + same body replays the original result.'
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 25
+        maximum: 100
+      description: Page size (default 25, max 100).
+    IncludeDeleted:
+      name: include_deleted
+      in: query
+      schema:
+        type: boolean
+      description: Include soft-deleted rows.
   securitySchemes:
     bearerAuth:
       type: http

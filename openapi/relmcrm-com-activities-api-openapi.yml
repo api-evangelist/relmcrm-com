@@ -144,53 +144,44 @@ paths:
         default:
           $ref: '#/components/responses/Problem'
 components:
-  parameters:
-    Limit:
-      name: limit
-      in: query
-      schema:
-        type: integer
-        default: 25
-        maximum: 100
-      description: Page size (default 25, max 100).
-    IncludeDeleted:
-      name: include_deleted
-      in: query
-      schema:
-        type: boolean
-      description: Include soft-deleted rows.
-    IfMatch:
-      name: If-Match
-      in: header
-      schema:
-        type: string
-      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
-    Cursor:
-      name: cursor
-      in: query
-      schema:
-        type: string
-      description: Opaque keyset cursor from a prior next_cursor.
-    IdPath:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    IdempotencyKey:
-      name: Idempotency-Key
-      in: header
-      schema:
-        type: string
-      description: 'Safely retry a create: same key + same body replays the original result.'
-  responses:
-    Problem:
-      description: RFC-9457 problem+json error.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
   schemas:
+    Activity:
+      type: object
+      properties:
+        id:
+          type: string
+          example: act_...
+        object:
+          type: string
+          const: activity
+        type:
+          type: string
+        body:
+          type:
+          - string
+          - 'null'
+        contact_id:
+          type:
+          - string
+          - 'null'
+        deal_id:
+          type:
+          - string
+          - 'null'
+        occurred_at:
+          type: string
+        custom_fields:
+          type: object
+        version:
+          type: integer
+        mode:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        deleted:
+          type: boolean
     ActivityInput:
       type: object
       description: Must attach to a contact_id and/or deal_id.
@@ -236,6 +227,15 @@ components:
           type: string
         request_id:
           type: string
+    ActivityList:
+      allOf:
+      - $ref: '#/components/schemas/ListMeta'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Activity'
     Deleted:
       type: object
       properties:
@@ -257,52 +257,52 @@ components:
           type:
           - string
           - 'null'
-    ActivityList:
-      allOf:
-      - $ref: '#/components/schemas/ListMeta'
-      - type: object
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/Activity'
-    Activity:
-      type: object
-      properties:
-        id:
-          type: string
-          example: act_...
-        object:
-          type: string
-          const: activity
-        type:
-          type: string
-        body:
-          type:
-          - string
-          - 'null'
-        contact_id:
-          type:
-          - string
-          - 'null'
-        deal_id:
-          type:
-          - string
-          - 'null'
-        occurred_at:
-          type: string
-        custom_fields:
-          type: object
-        version:
-          type: integer
-        mode:
-          type: string
-        created_at:
-          type: string
-        updated_at:
-          type: string
-        deleted:
-          type: boolean
+  responses:
+    Problem:
+      description: RFC-9457 problem+json error.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  parameters:
+    IfMatch:
+      name: If-Match
+      in: header
+      schema:
+        type: string
+      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      schema:
+        type: string
+      description: 'Safely retry a create: same key + same body replays the original result.'
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+      description: Opaque keyset cursor from a prior next_cursor.
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 25
+        maximum: 100
+      description: Page size (default 25, max 100).
+    IncludeDeleted:
+      name: include_deleted
+      in: query
+      schema:
+        type: boolean
+      description: Include soft-deleted rows.
   securitySchemes:
     bearerAuth:
       type: http

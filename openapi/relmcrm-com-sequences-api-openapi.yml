@@ -175,14 +175,38 @@ paths:
         default:
           $ref: '#/components/responses/Problem'
 components:
-  responses:
-    Problem:
-      description: RFC-9457 problem+json error.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
   schemas:
+    SequenceInput:
+      type: object
+      required:
+      - name
+      - steps
+      properties:
+        name:
+          type: string
+        channel:
+          type: string
+        connection:
+          type: string
+        trigger:
+          type: object
+        exit_when:
+          type: array
+        steps:
+          type: array
+          items:
+            type: object
+            properties:
+              wait_days:
+                type: integer
+              subject:
+                type: string
+              body:
+                type: string
+        enroll_existing:
+          type: boolean
+        enabled:
+          type: boolean
     Problem:
       type: object
       description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.
@@ -219,37 +243,13 @@ components:
           type: string
         deleted:
           type: boolean
-    SequenceInput:
-      type: object
-      required:
-      - name
-      - steps
-      properties:
-        name:
-          type: string
-        channel:
-          type: string
-        connection:
-          type: string
-        trigger:
-          type: object
-        exit_when:
-          type: array
-        steps:
-          type: array
-          items:
-            type: object
-            properties:
-              wait_days:
-                type: integer
-              subject:
-                type: string
-              body:
-                type: string
-        enroll_existing:
-          type: boolean
-        enabled:
-          type: boolean
+  responses:
+    Problem:
+      description: RFC-9457 problem+json error.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
   parameters:
     IdPath:
       name: id

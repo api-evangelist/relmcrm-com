@@ -95,21 +95,20 @@ paths:
         default:
           $ref: '#/components/responses/Problem'
 components:
-  responses:
-    Problem:
-      description: RFC-9457 problem+json error.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
   schemas:
-    Settings:
+    Usage:
       type: object
       properties:
-        overage_cap_usd:
-          type:
-          - number
-          - 'null'
+        period:
+          type: string
+        used:
+          type: integer
+        overage:
+          type: integer
+        limit:
+          type: integer
+        plan:
+          type: string
     Problem:
       type: object
       description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.
@@ -137,6 +136,13 @@ components:
           type: string
         request_id:
           type: string
+    Settings:
+      type: object
+      properties:
+        overage_cap_usd:
+          type:
+          - number
+          - 'null'
     SchemaDoc:
       type: object
       properties:
@@ -167,19 +173,13 @@ components:
             type: string
         notes:
           type: object
-    Usage:
-      type: object
-      properties:
-        period:
-          type: string
-        used:
-          type: integer
-        overage:
-          type: integer
-        limit:
-          type: integer
-        plan:
-          type: string
+  responses:
+    Problem:
+      description: RFC-9457 problem+json error.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
   securitySchemes:
     bearerAuth:
       type: http
