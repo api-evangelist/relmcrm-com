@@ -185,6 +185,8 @@ apis:
   humanURL: https://relmcrm.com/docs
   baseURL: https://api.relmcrm.com/v1
   tags:
+  - Automation
+  tags_raw:
   - Automations
   properties:
   - type: OpenAPI
@@ -545,6 +547,8 @@ apis:
   humanURL: https://relmcrm.com/docs
   baseURL: https://api.relmcrm.com/v1
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
@@ -575,6 +579,9 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: CapabilityMap
+  url: capabilities/relmcrm-com-capability-edges.yml
+  name: Relm Business Capability Map
 - type: VulnerabilityDisclosure
   url: security/relmcrm-com-vulnerability-disclosure.yml
 - type: Security
