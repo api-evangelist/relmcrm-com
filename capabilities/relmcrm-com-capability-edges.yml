@@ -1,0 +1,63 @@
+slug: relmcrm-com
+provider: Relm
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 5
+edges:
+- tag: Deals
+  spec_file: relmcrm-com-deals-api-openapi.yml
+  capability_id: BC-410.30
+  capability_id_l1: BC-410
+  capability_name: Opportunity & Pipeline Management
+  confidence: 0.9
+  evidence: POST /deals createDeal Create a deal (title required); PATCH /deals/{id} Update a deal (incl.
+    moving stage/pipeline)
+  reason: CRUD over sales deals including movement through pipeline stages is the lead/opportunity/deal
+    lifecycle, i.e. Opportunity & Pipeline Management under Sales Management.
+- tag: Pipelines
+  spec_file: relmcrm-com-pipelines-api-openapi.yml
+  capability_id: BC-410.30
+  capability_id_l1: BC-410
+  capability_name: Opportunity & Pipeline Management
+  confidence: 0.85
+  evidence: GET /pipelines listPipelines List pipelines with their ordered stages; DELETE /pipelines/{key}/stages/{stage}
+    Delete a stage (fails if deals use it)
+  reason: Defines and maintains sales pipelines and their stages that deals move through — configuration
+    of the opportunity/pipeline model within Sales Management.
+- tag: Webhooks
+  spec_file: relmcrm-com-webhooks-api-openapi.yml
+  capability_id: BC-4270.80
+  capability_id_l1: BC-4270
+  capability_name: Webhook & Event Subscription Management
+  confidence: 0.85
+  evidence: POST /webhooks createWebhook Subscribe an https endpoint to events. Returns the signing secret
+    once; GET /webhooks/{id}/deliveries listDeliveries Recent delivery attempts (status, retries, dead-letter)
+  reason: Lifecycle of outbound webhook subscriptions plus delivery reliability (retries, dead-letter)
+    matches Webhook & Event Subscription Management exactly.
+- tag: Contacts
+  spec_file: relmcrm-com-contacts-api-openapi.yml
+  capability_id: BC-420.10
+  capability_id_l1: BC-420
+  capability_name: Customer Data Management
+  confidence: 0.8
+  evidence: POST /contacts  createContact  Create a contact; DELETE /contacts/{id}  Soft-delete a contact
+  reason: Full lifecycle CRUD over CRM contact records in an explicitly described CRM product maps cleanly
+    to customer master/record management.
+- tag: Companies
+  spec_file: relmcrm-com-companies-api-openapi.yml
+  capability_id: BC-420.10
+  capability_id_l1: BC-420
+  capability_name: Customer Data Management
+  confidence: 0.75
+  evidence: POST /companies  createCompany  Create a company (name required)
+  reason: CRUD plus soft-delete/restore over CRM company (account) master records realises customer data
+    management. Slight ambiguity with account management, but the surface is pure record stewardship.
