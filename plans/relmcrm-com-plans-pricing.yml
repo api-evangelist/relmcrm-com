@@ -60,3 +60,29 @@ metering_notes:
 - Test-mode (relm_test_) requests never count against quota.
 - GET /v1/usage returns period, used, overage, limit and plan for the current billing period.
 - Terms (https://relmcrm.com/terms) allow price changes with 30 days' notice by email and on the changelog.
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - hybrid
+  - metered
+  units: []
+  plans:
+  - name: Free
+    access: other
+    model: metered
+    model_how: derived
+    units: []
+    periods: []
+  - name: Pro
+    access: other
+    model: hybrid
+    model_how: derived
+    units: []
+    periods: []
+  - name: Scale
+    access: other
+    model: hybrid
+    model_how: derived
+    units: []
+    periods: []
