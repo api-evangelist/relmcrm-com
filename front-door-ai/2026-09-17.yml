@@ -1,0 +1,36 @@
+# Front Door AI Index — relmcrm-com — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: relmcrm-com
+  lexicon_version: '1.0'
+  probed_at: '2026-09-25'
+  host: relmcrm.com
+  final_host: relmcrm.com
+  ownership: own
+  owner: relmcrm-com
+  shares_host_with: null
+  inherited_from: null
+  alias_of: null
+  verdict: scored
+  score: 56
+  band: 6
+  band_label: dominant
+  host_score: 56
+  density: 39.63
+  words: 1413
+  tiers:
+    agentic: 31
+    core: 16
+    model: 9
+  ambiguous: 37
+  top_terms:
+    agent: 37
+    MCP: 22
+    AI: 8
+    LLMs: 8
+    AI agent: 6
+    Claude: 6
+    ChatGPT: 3
+    llms.txt: 2
+    model context protocol: 1
