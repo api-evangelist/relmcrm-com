@@ -144,6 +144,45 @@ paths:
         default:
           $ref: '#/components/responses/Problem'
 components:
+  parameters:
+    IncludeDeleted:
+      name: include_deleted
+      in: query
+      schema:
+        type: boolean
+      description: Include soft-deleted rows.
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+      description: Opaque keyset cursor from a prior next_cursor.
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 25
+        maximum: 100
+      description: Page size (default 25, max 100).
+    IfMatch:
+      name: If-Match
+      in: header
+      schema:
+        type: string
+      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      schema:
+        type: string
+      description: 'Safely retry a create: same key + same body replays the original result.'
   schemas:
     Activity:
       type: object
@@ -182,24 +221,24 @@ components:
           type: string
         deleted:
           type: boolean
-    ActivityInput:
+    ActivityList:
+      allOf:
+      - $ref: '#/components/schemas/ListMeta'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Activity'
+    Deleted:
       type: object
-      description: Must attach to a contact_id and/or deal_id.
       properties:
-        type:
+        id:
           type: string
-          description: A registered activity.type (note/email/call/meeting/task/...).
-        body:
+        object:
           type: string
-        contact_id:
-          type: string
-        deal_id:
-          type: string
-        occurred_at:
-          type: string
-          description: ISO datetime; backdates imported history.
-        custom_fields:
-          type: object
+        deleted:
+          type: boolean
     Problem:
       type: object
       description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.
@@ -227,24 +266,24 @@ components:
           type: string
         request_id:
           type: string
-    ActivityList:
-      allOf:
-      - $ref: '#/components/schemas/ListMeta'
-      - type: object
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/Activity'
-    Deleted:
+    ActivityInput:
       type: object
+      description: Must attach to a contact_id and/or deal_id.
       properties:
-        id:
+        type:
           type: string
-        object:
+          description: A registered activity.type (note/email/call/meeting/task/...).
+        body:
           type: string
-        deleted:
-          type: boolean
+        contact_id:
+          type: string
+        deal_id:
+          type: string
+        occurred_at:
+          type: string
+          description: ISO datetime; backdates imported history.
+        custom_fields:
+          type: object
     ListMeta:
       type: object
       properties:
@@ -264,45 +303,6 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Problem'
-  parameters:
-    IfMatch:
-      name: If-Match
-      in: header
-      schema:
-        type: string
-      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
-    IdPath:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    IdempotencyKey:
-      name: Idempotency-Key
-      in: header
-      schema:
-        type: string
-      description: 'Safely retry a create: same key + same body replays the original result.'
-    Cursor:
-      name: cursor
-      in: query
-      schema:
-        type: string
-      description: Opaque keyset cursor from a prior next_cursor.
-    Limit:
-      name: limit
-      in: query
-      schema:
-        type: integer
-        default: 25
-        maximum: 100
-      description: Page size (default 25, max 100).
-    IncludeDeleted:
-      name: include_deleted
-      in: query
-      schema:
-        type: boolean
-      description: Include soft-deleted rows.
   securitySchemes:
     bearerAuth:
       type: http

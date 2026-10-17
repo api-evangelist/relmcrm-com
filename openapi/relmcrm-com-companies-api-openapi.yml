@@ -140,30 +140,32 @@ paths:
           $ref: '#/components/responses/Problem'
 components:
   schemas:
-    Company:
+    CompanyInput:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        domain:
+          type: string
+        custom_fields:
+          type: object
+    CompanyList:
+      allOf:
+      - $ref: '#/components/schemas/ListMeta'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Company'
+    Deleted:
       type: object
       properties:
         id:
           type: string
-          example: cmp_...
         object:
-          type: string
-          const: company
-        name:
-          type: string
-        domain:
-          type:
-          - string
-          - 'null'
-        custom_fields:
-          type: object
-        version:
-          type: integer
-        mode:
-          type: string
-        created_at:
-          type: string
-        updated_at:
           type: string
         deleted:
           type: boolean
@@ -206,67 +208,52 @@ components:
           type:
           - string
           - 'null'
-    CompanyInput:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-        domain:
-          type: string
-        custom_fields:
-          type: object
-    Deleted:
+    Company:
       type: object
       properties:
         id:
           type: string
+          example: cmp_...
         object:
+          type: string
+          const: company
+        name:
+          type: string
+        domain:
+          type:
+          - string
+          - 'null'
+        custom_fields:
+          type: object
+        version:
+          type: integer
+        mode:
+          type: string
+        created_at:
+          type: string
+        updated_at:
           type: string
         deleted:
           type: boolean
-    CompanyList:
-      allOf:
-      - $ref: '#/components/schemas/ListMeta'
-      - type: object
-        properties:
-          data:
-            type: array
-            items:
-              $ref: '#/components/schemas/Company'
-  responses:
-    Problem:
-      description: RFC-9457 problem+json error.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
   parameters:
-    IfMatch:
-      name: If-Match
-      in: header
+    IncludeDeleted:
+      name: include_deleted
+      in: query
       schema:
-        type: string
-      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
-    IdPath:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
+        type: boolean
+      description: Include soft-deleted rows.
     Cursor:
       name: cursor
       in: query
       schema:
         type: string
       description: Opaque keyset cursor from a prior next_cursor.
-    IdempotencyKey:
-      name: Idempotency-Key
-      in: header
+    IdPath:
+      name: id
+      in: path
+      required: true
       schema:
         type: string
-      description: 'Safely retry a create: same key + same body replays the original result.'
     Limit:
       name: limit
       in: query
@@ -275,12 +262,25 @@ components:
         default: 25
         maximum: 100
       description: Page size (default 25, max 100).
-    IncludeDeleted:
-      name: include_deleted
-      in: query
+    IfMatch:
+      name: If-Match
+      in: header
       schema:
-        type: boolean
-      description: Include soft-deleted rows.
+        type: string
+      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      schema:
+        type: string
+      description: 'Safely retry a create: same key + same body replays the original result.'
+  responses:
+    Problem:
+      description: RFC-9457 problem+json error.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
   securitySchemes:
     bearerAuth:
       type: http

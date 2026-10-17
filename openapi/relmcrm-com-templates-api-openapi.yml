@@ -130,18 +130,18 @@ components:
           schema:
             $ref: '#/components/schemas/Problem'
   parameters:
-    IfMatch:
-      name: If-Match
-      in: header
-      schema:
-        type: string
-      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
     IdPath:
       name: id
       in: path
       required: true
       schema:
         type: string
+    IfMatch:
+      name: If-Match
+      in: header
+      schema:
+        type: string
+      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
   schemas:
     Problem:
       type: object

@@ -133,34 +133,14 @@ components:
         application/problem+json:
           schema:
             $ref: '#/components/schemas/Problem'
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
   schemas:
-    Problem:
-      type: object
-      description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.
-      properties:
-        type:
-          type: string
-          format: uri
-          example: https://relmcrm.com/errors/unknown_value
-        title:
-          type: string
-        status:
-          type: integer
-        detail:
-          type: string
-        code:
-          type: string
-          example: unknown_value
-        field:
-          type: string
-        valid_options:
-          type: array
-          items:
-            type: string
-        suggestion:
-          type: string
-        request_id:
-          type: string
     AutomationInput:
       type: object
       required:
@@ -203,6 +183,33 @@ components:
                 - set_field
         enabled:
           type: boolean
+    Problem:
+      type: object
+      description: RFC-9457 error. Closed-set rejections carry valid_options + suggestion so an agent self-corrects.
+      properties:
+        type:
+          type: string
+          format: uri
+          example: https://relmcrm.com/errors/unknown_value
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        code:
+          type: string
+          example: unknown_value
+        field:
+          type: string
+        valid_options:
+          type: array
+          items:
+            type: string
+        suggestion:
+          type: string
+        request_id:
+          type: string
     Deleted:
       type: object
       properties:
@@ -212,13 +219,6 @@ components:
           type: string
         deleted:
           type: boolean
-  parameters:
-    IdPath:
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
   securitySchemes:
     bearerAuth:
       type: http

@@ -152,23 +152,14 @@ components:
           description: whsec_...; returned ONLY on create.
         version:
           type: integer
-    WebhookInput:
+    Deleted:
       type: object
-      required:
-      - url
       properties:
-        url:
+        id:
           type: string
-          format: uri
-          description: Public https endpoint (test mode allows localhost).
-        events:
-          type: array
-          items:
-            type: string
-          description: Subset of the 5 events, or ["*"].
-        description:
+        object:
           type: string
-        enabled:
+        deleted:
           type: boolean
     Problem:
       type: object
@@ -197,14 +188,23 @@ components:
           type: string
         request_id:
           type: string
-    Deleted:
+    WebhookInput:
       type: object
+      required:
+      - url
       properties:
-        id:
+        url:
           type: string
-        object:
+          format: uri
+          description: Public https endpoint (test mode allows localhost).
+        events:
+          type: array
+          items:
+            type: string
+          description: Subset of the 5 events, or ["*"].
+        description:
           type: string
-        deleted:
+        enabled:
           type: boolean
   responses:
     Problem:
@@ -214,18 +214,18 @@ components:
           schema:
             $ref: '#/components/schemas/Problem'
   parameters:
-    IfMatch:
-      name: If-Match
-      in: header
-      schema:
-        type: string
-      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
     IdPath:
       name: id
       in: path
       required: true
       schema:
         type: string
+    IfMatch:
+      name: If-Match
+      in: header
+      schema:
+        type: string
+      description: The record's current version for optimistic concurrency; a mismatch returns 412 version_conflict.
   securitySchemes:
     bearerAuth:
       type: http

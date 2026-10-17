@@ -95,7 +95,44 @@ paths:
         default:
           $ref: '#/components/responses/Problem'
 components:
+  responses:
+    Problem:
+      description: RFC-9457 problem+json error.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
   schemas:
+    SchemaDoc:
+      type: object
+      properties:
+        objects:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              id_prefix:
+                type:
+                - string
+                - 'null'
+              list_filters:
+                type: array
+                items:
+                  type: string
+              fields:
+                type: array
+                items:
+                  type: object
+        enum_groups:
+          type: object
+        list_controls:
+          type: array
+          items:
+            type: string
+        notes:
+          type: object
     Usage:
       type: object
       properties:
@@ -143,43 +180,6 @@ components:
           type:
           - number
           - 'null'
-    SchemaDoc:
-      type: object
-      properties:
-        objects:
-          type: array
-          items:
-            type: object
-            properties:
-              key:
-                type: string
-              id_prefix:
-                type:
-                - string
-                - 'null'
-              list_filters:
-                type: array
-                items:
-                  type: string
-              fields:
-                type: array
-                items:
-                  type: object
-        enum_groups:
-          type: object
-        list_controls:
-          type: array
-          items:
-            type: string
-        notes:
-          type: object
-  responses:
-    Problem:
-      description: RFC-9457 problem+json error.
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
   securitySchemes:
     bearerAuth:
       type: http
