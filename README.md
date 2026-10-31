@@ -64,8 +64,148 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Relm is an API-first CRM built for LLMs and AI agents (operated by ASP FZE LLC; data hosted in Helsinki, Finland). One workspace key drives three surfaces: a 72-operation OpenAPI 3.1 REST API at `https://api.relmcrm.com/v1`, a hosted MCP server at `https://api.relmcrm.com/mcp` (41 tools, anonymous `tools/list`), and an A2A 0.3.0 agent card at `https://relmcrm.com/.well-known/agent-card.json`. Profiled 2026-09-19 from the provider's own public surface — see `apis.yml` for every artifact and pointer.
-- https://relmcrm.com/
-- https://relmcrm.com/docs
-- https://relmcrm.com/openapi.json
-- https://relmcrm.com/llms.txt
+Relm is an API-first CRM built for LLMs and AI agents, operated by ASP FZE LLC (Sharjah, UAE) with data hosted in Helsinki, Finland. Contacts, companies, deals, activities, pipelines, automations, drip sequences, templates and webhooks are exposed three ways over one workspace key: a 72-operation OpenAPI 3.1 REST API at https://api.relmcrm.com/v1, a hosted Streamable-HTTP MCP server at https://api.relmcrm.com/mcp whose 41 typed tools answer an anonymous tools/list, and an A2A 0.3.0 agent card at https://relmcrm.com/.well-known/agent-card.json backed by a JSON-RPC endpoint at https://api.relmcrm.com/a2a. Auth is a workspace bearer key (relm_live_ / free isolated relm_test_) or OAuth 2.1 with PKCE and RFC 7591 dynamic client registration; errors are RFC 9457 problem+json carrying valid_options and a suggestion so an agent self-corrects; writes carry Idempotency-Key on the core creates and If-Match optimistic concurrency on updates. Priced per API request (Free 1,000/mo, Pro $29 for 100,000, Scale $249 for 2,000,000) rather than per seat. The web dashboard is described by the provider as "the thin part".
+
+**Areas:** CRM · Sales · Contacts · Deals · Sales Pipeline · Automation · Webhook · MCP · A2A · AI Agents · Agent-Native · United Arab Emirates
+
+## Relm on APIs.io
+
+Everything profiled for Relm is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/relmcrm-com/](https://apis.io/providers/relmcrm-com/)** — or go straight to one of the APIs or properties below.
+
+### APIs (16)
+
+- [Relm MCP Server](https://apis.io/apis/relmcrm-com/relm-mcp-server/) — First-party hosted Model Context Protocol server (Streamable HTTP) at https://api.relmcrm.com/mcp. 41 typed tools covering every REST capability — schema…
+- [Relm A2A Agent](https://apis.io/apis/relmcrm-com/relm-a2a-agent/) — Agent2Agent (A2A 0.3.0) JSON-RPC endpoint at https://api.relmcrm.com/a2a. A message/send whose data part is {tool, arguments} runs one of the same 41 MCP…
+- [Relm Activities API](https://apis.io/apis/relmcrm-com/relmcrm-com-activities-api/) — The Activities API from Relm — 3 operation(s) for activities.
+- [Relm Automations API](https://apis.io/apis/relmcrm-com/relmcrm-com-automations-api/) — The Automations API from Relm — 3 operation(s) for automations.
+- [Relm Batch API](https://apis.io/apis/relmcrm-com/relmcrm-com-batch-api/) — The Batch API from Relm — 1 operation(s) for batch.
+- [Relm Companies API](https://apis.io/apis/relmcrm-com/relmcrm-com-companies-api/) — The Companies API from Relm — 3 operation(s) for companies.
+- [Relm Connections API](https://apis.io/apis/relmcrm-com/relmcrm-com-connections-api/) — The Connections API from Relm — 2 operation(s) for connections.
+- [Relm Contacts API](https://apis.io/apis/relmcrm-com/relmcrm-com-contacts-api/) — The Contacts API from Relm — 3 operation(s) for contacts.
+- [Relm Deals API](https://apis.io/apis/relmcrm-com/relmcrm-com-deals-api/) — The Deals API from Relm — 3 operation(s) for deals.
+- [Relm Discovery API](https://apis.io/apis/relmcrm-com/relmcrm-com-discovery-api/) — Self-describing schema, usage, settings.
+- [Relm Pipelines API](https://apis.io/apis/relmcrm-com/relmcrm-com-pipelines-api/) — The Pipelines API from Relm — 6 operation(s) for pipelines.
+- [Relm Registry API](https://apis.io/apis/relmcrm-com/relmcrm-com-registry-api/) — Custom fields, enums, object types.
+- [Relm Search API](https://apis.io/apis/relmcrm-com/relmcrm-com-search-api/) — The Search API from Relm — 1 operation(s) for search.
+- [Relm Sequences API](https://apis.io/apis/relmcrm-com/relmcrm-com-sequences-api/) — The Sequences API from Relm — 5 operation(s) for sequences.
+- [Relm Templates API](https://apis.io/apis/relmcrm-com/relmcrm-com-templates-api/) — The Templates API from Relm — 2 operation(s) for templates.
+- [Relm Webhooks API](https://apis.io/apis/relmcrm-com/relmcrm-com-webhooks-api/) — The Webhooks API from Relm — 3 operation(s) for webhooks.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Relmcrm Com Webhooks](https://apis.io/asyncapis/relmcrm-com/relmcrm-com-webhooks/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [Relm CRM](https://apis.io/servers/relmcrm-com/relm/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Relmcrm Com Openapi Overlay](https://apis.io/overlays/relmcrm-com/relmcrm-com-openapi-overlay/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Relmcrm Com Authentication](https://apis.io/security/relmcrm-com/relmcrm-com-authentication/)
+- [Relmcrm Com Domain Security](https://apis.io/security/relmcrm-com/relmcrm-com-domain-security/)
+- [Relmcrm Com Vulnerability Disclosure](https://apis.io/security/relmcrm-com/relmcrm-com-vulnerability-disclosure/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Relmcrm Com Scopes](https://apis.io/scopes/relmcrm-com/relmcrm-com-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Relmcrm Com Plans Pricing](https://apis.io/plans/relmcrm-com/relmcrm-com-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Relmcrm Com Rate Limits](https://apis.io/rate-limits/relmcrm-com/relmcrm-com-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://relmcrm.com/)
+- [Documentation](https://relmcrm.com/docs)
+- [Getting started](https://relmcrm.com/docs)
+- [API reference](https://relmcrm.com/docs)
+- [Pricing](https://relmcrm.com/#pricing)
+- [Sign up](https://app.relmcrm.com/)
+- [Support](https://relmcrm.com/support)
+- [Changelog](https://relmcrm.com/changelog)
+- [Terms of service](https://relmcrm.com/terms)
+- [Privacy policy](https://relmcrm.com/privacy)
+- [Status](https://relmcrm.com/status)
+
+## API Evangelist rating
+
+**Kin Score 64.6** — strong · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 75.0 |
+| Contract quality | 54.3 |
+| Contract governance | 18.2 |
+| Operational transparency | 50.0 |
+| Developer ergonomics | 70.8 |
+| Access clarity | 76.3 |
+
+**Agent readiness 62.6** — agent-native
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | documented (partial credit) |
+| Auth Clarity | served (partial credit) |
+| Idempotency | verified |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | conformant |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+| Pagination Ratio | partial |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 55.9** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/relmcrm-com/](https://apis.io/providers/relmcrm-com/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Relm: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/relmcrm-com/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
